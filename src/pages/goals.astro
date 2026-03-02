@@ -1,0 +1,519 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Goals & Budgets - Vibrant Ledger">
+    <Navbar />
+    <main class="flex-1 px-6 py-8 lg:px-12 max-w-6xl mx-auto w-full relative">
+        <div class="animate-fade-in">
+            <div
+                class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4"
+            >
+                <div>
+                    <h1
+                        class="font-bold text-4xl text-slate-dark tracking-tight"
+                    >
+                        Savings Goals
+                    </h1>
+                    <p class="text-slate-500 font-medium mt-2">
+                        Track your progress towards your dreams.
+                    </p>
+                </div>
+                <button
+                    class="bg-indigo text-white font-bold py-3 px-6 rounded-xl shadow-tactile hover:shadow-tactile-hover hover:translate-y-0.5 transition-all flex items-center gap-2"
+                >
+                    <span class="material-symbols-outlined">add</span>
+                    New Goal
+                </button>
+            </div>
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
+            >
+                <div
+                    class="bg-white rounded-3xl p-8 shadow-card border border-slate-100 flex flex-col items-center relative overflow-hidden group hover:border-indigo-200 transition-colors"
+                >
+                    <div class="absolute top-4 right-4">
+                        <button
+                            class="text-slate-300 hover:text-indigo transition-colors"
+                        >
+                            <span class="material-symbols-outlined"
+                                >more_vert</span
+                            >
+                        </button>
+                    </div>
+                    <div class="relative w-48 h-48 mb-6">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle
+                                class="text-slate-100 stroke-current"
+                                cx="50"
+                                cy="50"
+                                fill="transparent"
+                                r="40"
+                                stroke-width="8"></circle>
+                            <circle
+                                class="text-indigo progress-ring-circle stroke-current"
+                                cx="50"
+                                cy="50"
+                                fill="transparent"
+                                r="40"
+                                stroke-dasharray="251.2"
+                                stroke-dashoffset="62.8"
+                                stroke-linecap="round"
+                                stroke-width="8"></circle>
+                        </svg>
+                        <div
+                            class="absolute inset-0 flex items-center justify-center flex-col"
+                        >
+                            <span
+                                class="material-symbols-outlined text-4xl text-indigo mb-1"
+                                >directions_car</span
+                            >
+                            <span
+                                class="font-mono text-3xl font-bold text-slate-dark"
+                                >75%</span
+                            >
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-dark mb-1">
+                        New Car Fund
+                    </h3>
+                    <p class="text-slate-400 font-medium text-sm mb-6">
+                        Target: Dec 2024
+                    </p>
+                    <div class="w-full grid grid-cols-2 gap-4 text-center">
+                        <div
+                            class="bg-slate-50 p-3 rounded-xl border border-slate-100"
+                        >
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"
+                                >Current</span
+                            >
+                            <span
+                                class="font-mono text-lg font-bold text-indigo"
+                                >$15,000</span
+                            >
+                        </div>
+                        <div
+                            class="bg-slate-50 p-3 rounded-xl border border-slate-100"
+                        >
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"
+                                >Target</span
+                            >
+                            <span
+                                class="font-mono text-lg font-bold text-slate-dark"
+                                >$20,000</span
+                            >
+                        </div>
+                    </div>
+                    <div class="mt-4 w-full text-center">
+                        <span
+                            class="text-xs font-bold text-slate-400 uppercase tracking-wider"
+                            >Remaining Balance:
+                        </span>
+                        <span class="font-mono text-sm font-bold text-slate-500"
+                            >$5,000</span
+                        >
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-3xl p-8 shadow-card border border-slate-100 flex flex-col items-center relative overflow-hidden group hover:border-indigo-200 transition-colors"
+                >
+                    <div class="absolute top-4 right-4">
+                        <button
+                            class="text-slate-300 hover:text-indigo transition-colors"
+                        >
+                            <span class="material-symbols-outlined"
+                                >more_vert</span
+                            >
+                        </button>
+                    </div>
+                    <div class="relative w-48 h-48 mb-6">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle
+                                class="text-slate-100 stroke-current"
+                                cx="50"
+                                cy="50"
+                                fill="transparent"
+                                r="40"
+                                stroke-width="8"></circle>
+                            <circle
+                                class="text-indigo progress-ring-circle stroke-current"
+                                cx="50"
+                                cy="50"
+                                fill="transparent"
+                                r="40"
+                                stroke-dasharray="251.2"
+                                stroke-dashoffset="188.4"
+                                stroke-linecap="round"
+                                stroke-width="8"></circle>
+                        </svg>
+                        <div
+                            class="absolute inset-0 flex items-center justify-center flex-col"
+                        >
+                            <span
+                                class="material-symbols-outlined text-4xl text-indigo mb-1"
+                                >flight</span
+                            >
+                            <span
+                                class="font-mono text-3xl font-bold text-slate-dark"
+                                >25%</span
+                            >
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-dark mb-1">
+                        Japan Trip
+                    </h3>
+                    <p class="text-slate-400 font-medium text-sm mb-6">
+                        Target: Mar 2025
+                    </p>
+                    <div class="w-full grid grid-cols-2 gap-4 text-center">
+                        <div
+                            class="bg-slate-50 p-3 rounded-xl border border-slate-100"
+                        >
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"
+                                >Current</span
+                            >
+                            <span
+                                class="font-mono text-lg font-bold text-indigo"
+                                >$2,500</span
+                            >
+                        </div>
+                        <div
+                            class="bg-slate-50 p-3 rounded-xl border border-slate-100"
+                        >
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"
+                                >Target</span
+                            >
+                            <span
+                                class="font-mono text-lg font-bold text-slate-dark"
+                                >$10,000</span
+                            >
+                        </div>
+                    </div>
+                    <div class="mt-4 w-full text-center">
+                        <span
+                            class="text-xs font-bold text-slate-400 uppercase tracking-wider"
+                            >Remaining Balance:
+                        </span>
+                        <span class="font-mono text-sm font-bold text-slate-500"
+                            >$7,500</span
+                        >
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-3xl p-8 shadow-card border border-slate-100 flex flex-col items-center relative overflow-hidden group hover:border-indigo-200 transition-colors"
+                >
+                    <div class="absolute top-4 right-4">
+                        <button
+                            class="text-slate-300 hover:text-indigo transition-colors"
+                        >
+                            <span class="material-symbols-outlined"
+                                >more_vert</span
+                            >
+                        </button>
+                    </div>
+                    <div class="relative w-48 h-48 mb-6">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle
+                                class="text-slate-100 stroke-current"
+                                cx="50"
+                                cy="50"
+                                fill="transparent"
+                                r="40"
+                                stroke-width="8"></circle>
+                            <circle
+                                class="text-indigo progress-ring-circle stroke-current"
+                                cx="50"
+                                cy="50"
+                                fill="transparent"
+                                r="40"
+                                stroke-dasharray="251.2"
+                                stroke-dashoffset="125.6"
+                                stroke-linecap="round"
+                                stroke-width="8"></circle>
+                        </svg>
+                        <div
+                            class="absolute inset-0 flex items-center justify-center flex-col"
+                        >
+                            <span
+                                class="material-symbols-outlined text-4xl text-indigo mb-1"
+                                >laptop_mac</span
+                            >
+                            <span
+                                class="font-mono text-3xl font-bold text-slate-dark"
+                                >50%</span
+                            >
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-dark mb-1">
+                        MacBook Pro
+                    </h3>
+                    <p class="text-slate-400 font-medium text-sm mb-6">
+                        Target: Next Month
+                    </p>
+                    <div class="w-full grid grid-cols-2 gap-4 text-center">
+                        <div
+                            class="bg-slate-50 p-3 rounded-xl border border-slate-100"
+                        >
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"
+                                >Current</span
+                            >
+                            <span
+                                class="font-mono text-lg font-bold text-indigo"
+                                >$1,500</span
+                            >
+                        </div>
+                        <div
+                            class="bg-slate-50 p-3 rounded-xl border border-slate-100"
+                        >
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"
+                                >Target</span
+                            >
+                            <span
+                                class="font-mono text-lg font-bold text-slate-dark"
+                                >$3,000</span
+                            >
+                        </div>
+                    </div>
+                    <div class="mt-4 w-full text-center">
+                        <span
+                            class="text-xs font-bold text-slate-400 uppercase tracking-wider"
+                            >Remaining Balance:
+                        </span>
+                        <span class="font-mono text-sm font-bold text-slate-500"
+                            >$1,500</span
+                        >
+                    </div>
+                </div>
+                <button
+                    class="rounded-3xl p-8 border-4 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-indigo hover:text-indigo hover:bg-indigo-bg/30 transition-all min-h-[460px] group cursor-pointer"
+                >
+                    <div
+                        class="w-20 h-20 rounded-full bg-slate-100 group-hover:bg-indigo group-hover:text-white flex items-center justify-center mb-4 transition-colors"
+                    >
+                        <span class="material-symbols-outlined text-4xl"
+                            >add</span
+                        >
+                    </div>
+                    <span class="text-xl font-bold">Create New Goal</span>
+                    <span class="text-sm font-medium mt-2 opacity-70"
+                        >Start saving for something new</span
+                    >
+                </button>
+            </div>
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2
+                        class="font-bold text-3xl text-slate-dark tracking-tight"
+                    >
+                        Monthly Budgets
+                    </h2>
+                    <p class="text-slate-500 font-medium mt-2">
+                        Manage your spending limits.
+                    </p>
+                </div>
+                <button class="text-indigo font-bold hover:underline"
+                    >Manage Categories</button
+                >
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-card border border-slate-100"
+                >
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-indigo-bg flex items-center justify-center text-indigo"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >restaurant</span
+                                >
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-dark">
+                                    Dining Out
+                                </h4>
+                                <p
+                                    class="text-xs font-bold text-slate-400 uppercase"
+                                >
+                                    Monthly Limit
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span
+                                class="font-mono text-2xl font-bold text-slate-dark"
+                                >$450</span
+                            >
+                            <span class="font-mono text-sm text-slate-400">
+                                / $800</span
+                            >
+                        </div>
+                    </div>
+                    <div
+                        class="relative h-4 w-full bg-slate-100 rounded-full overflow-hidden"
+                    >
+                        <div
+                            class="absolute h-full bg-indigo rounded-full progress-bar-fill"
+                            style="width: 56%"
+                        >
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm font-medium">
+                        <span class="text-indigo font-bold">56% Used</span>
+                        <span class="text-slate-400">$350 remaining</span>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-card border border-slate-100"
+                >
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-orange-bg flex items-center justify-center text-orange"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >shopping_bag</span
+                                >
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-dark">
+                                    Shopping
+                                </h4>
+                                <p
+                                    class="text-xs font-bold text-slate-400 uppercase"
+                                >
+                                    Monthly Limit
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span
+                                class="font-mono text-2xl font-bold text-slate-dark"
+                                >$820</span
+                            >
+                            <span class="font-mono text-sm text-slate-400">
+                                / $900</span
+                            >
+                        </div>
+                    </div>
+                    <div
+                        class="relative h-4 w-full bg-slate-100 rounded-full overflow-hidden"
+                    >
+                        <div
+                            class="absolute h-full bg-orange rounded-full progress-bar-fill"
+                            style="width: 91%"
+                        >
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm font-medium">
+                        <span class="text-orange font-bold">91% Used</span>
+                        <span class="text-slate-400">$80 remaining</span>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-card border border-slate-100"
+                >
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-indigo-bg flex items-center justify-center text-indigo"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >local_gas_station</span
+                                >
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-dark">
+                                    Transportation
+                                </h4>
+                                <p
+                                    class="text-xs font-bold text-slate-400 uppercase"
+                                >
+                                    Monthly Limit
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span
+                                class="font-mono text-2xl font-bold text-slate-dark"
+                                >$120</span
+                            >
+                            <span class="font-mono text-sm text-slate-400">
+                                / $300</span
+                            >
+                        </div>
+                    </div>
+                    <div
+                        class="relative h-4 w-full bg-slate-100 rounded-full overflow-hidden"
+                    >
+                        <div
+                            class="absolute h-full bg-indigo rounded-full progress-bar-fill"
+                            style="width: 40%"
+                        >
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm font-medium">
+                        <span class="text-indigo font-bold">40% Used</span>
+                        <span class="text-slate-400">$180 remaining</span>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-card border border-slate-100"
+                >
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-orange-bg flex items-center justify-center text-orange"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >movie</span
+                                >
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-dark">
+                                    Entertainment
+                                </h4>
+                                <p
+                                    class="text-xs font-bold text-slate-400 uppercase"
+                                >
+                                    Monthly Limit
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span
+                                class="font-mono text-2xl font-bold text-slate-dark"
+                                >$190</span
+                            >
+                            <span class="font-mono text-sm text-slate-400">
+                                / $200</span
+                            >
+                        </div>
+                    </div>
+                    <div
+                        class="relative h-4 w-full bg-slate-100 rounded-full overflow-hidden"
+                    >
+                        <div
+                            class="absolute h-full bg-orange rounded-full progress-bar-fill"
+                            style="width: 95%"
+                        >
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm font-medium">
+                        <span class="text-orange font-bold">95% Used</span>
+                        <span class="text-slate-400">$10 remaining</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <Footer />
+</Layout>

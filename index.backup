@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Vibrant Modern Ledger Dashboard</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        indigo: {
+                            DEFAULT: '#4F46E5', // Electric Indigo
+                            dark: '#3730A3',
+                            light: '#818CF8',
+                            bg: '#EEF2FF'
+                        },
+                        orange: {
+                            DEFAULT: '#FF6B35', // Sunset Orange
+                            light: '#FF9F1C',
+                            bg: '#FFF7ED'
+                        },
+                        teal: {
+                            DEFAULT: '#0D9488',
+                            light: '#2DD4BF',
+                            dark: '#0F766E'
+                        },
+                        slate: {
+                            light: '#F3F4F6', // Soft Slate background
+                            DEFAULT: '#94A3B8',
+                            dark: '#1E293B' // Dark slate text
+                        },
+                        white: '#FFFFFF',
+                        pink: {
+                            DEFAULT: '#EC4899',
+                            light: '#FBCFE8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ["Outfit", "sans-serif"], // Playful professional
+                        mono: ["Space Grotesk", "sans-serif"], // Heavy numbers
+                    },
+                    boxShadow: {
+                        'tactile': '4px 4px 0px 0px rgba(0,0,0,0.1)',
+                        'tactile-hover': '2px 2px 0px 0px rgba(0,0,0,0.1)',
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                        'floating': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            background-color: #F3F4F6;
+            color: #1E293B;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-bar-fill {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-light text-slate-dark font-sans min-h-screen flex flex-col antialiased selection:bg-indigo selection:text-white overflow-x-hidden">
+    <nav class="w-full px-6 py-4 lg:px-12 bg-white sticky top-0 z-50 border-b-4 border-slate-200">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center">
+            <div class="flex items-center justify-between w-full md:w-auto">
+                <div class="flex items-center gap-12">
+                    <div
+                        class="w-12 h-12 bg-indigo text-white flex items-center justify-center font-mono font-bold text-2xl rounded-xl shadow-tactile">
+                        V
+                    </div>
+                    <!-- Desktop Nav -->
+                    <div class="hidden md:flex gap-8">
+                        <button onclick="switchTab('dashboard')" id="nav-dashboard"
+                            class="nav-link font-sans text-base font-bold text-indigo border-b-4 border-indigo pb-1 transition-colors">Dashboard</button>
+                        <button onclick="switchTab('history')" id="nav-history"
+                            class="nav-link font-sans text-base font-bold text-slate-400 hover:text-indigo pb-1 border-b-4 border-transparent transition-colors">History</button>
+                        <button onclick="switchTab('goals')" id="nav-goals"
+                            class="nav-link font-sans text-base font-bold text-slate-400 hover:text-indigo pb-1 border-b-4 border-transparent transition-colors">Goals
+                            &amp; Budgets</button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 md:hidden">
+                    <div class="bg-slate-100 rounded-full p-1 pr-4 flex items-center gap-3 border border-slate-200">
+                        <img alt="User" class="w-8 h-8 rounded-full object-cover border-2 border-white"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA95F-Jn7rj7RaszPbcQNIva-1w7s9xhXoia9MC5kswawawrH4zKRiCjTz_81qJ9hyAPA5C-6ZwRnrGMUYektWeirFee6L-mEtQ5PcDDA0pqU95Zm88Wmpux6DIarB4-b_d4B9cgp5B-tMo6-4euo1WaZdrB6BFCrH1F_RyWI83YTTSizAk-WX9rZprkffefxG5NbyK6dQiXmiMGHpuBGh9_IWjQaYLHNFLRm5e3O5FAdpWGaigcb5JLjH9Ihxb6f5utdB7quGJiUI" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden md:flex items-center gap-4">
+                <div class="bg-slate-100 rounded-full p-1 pr-4 flex items-center gap-3 border border-slate-200">
+                    <img alt="User" class="w-8 h-8 rounded-full object-cover border-2 border-white"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA95F-Jn7rj7RaszPbcQNIva-1w7s9xhXoia9MC5kswawawrH4zKRiCjTz_81qJ9hyAPA5C-6ZwRnrGMUYektWeirFee6L-mEtQ5PcDDA0pqU95Zm88Wmpux6DIarB4-b_d4B9cgp5B-tMo6-4euo1WaZdrB6BFCrH1F_RyWI83YTTSizAk-WX9rZprkffefxG5NbyK6dQiXmiMGHpuBGh9_IWjQaYLHNFLRm5e3O5FAdpWGaigcb5JLjH9Ihxb6f5utdB7quGJiUI" />
+                    <span class="font-bold text-sm text-slate-dark">David G.</span>
+                </div>
+            </div>
+
+            <!-- Mobile Nav -->
+            <div class="md:hidden flex gap-6 mt-4 overflow-x-auto pb-2 scrollbar-hide">
+                <button onclick="switchTab('dashboard')" id="nav-mobile-dashboard"
+                    class="nav-link whitespace-nowrap font-sans text-sm font-bold text-indigo border-b-2 border-indigo pb-1 transition-colors">Dashboard</button>
+                <button onclick="switchTab('history')" id="nav-mobile-history"
+                    class="nav-link whitespace-nowrap font-sans text-sm font-bold text-slate-400 hover:text-indigo pb-1 border-b-2 border-transparent transition-colors">History</button>
+                <button onclick="switchTab('goals')" id="nav-mobile-goals"
+                    class="nav-link whitespace-nowrap font-sans text-sm font-bold text-slate-400 hover:text-indigo pb-1 border-b-2 border-transparent transition-colors">Goals
+                    &amp; Budgets</button>
+            </div>
+        </div>
+    </nav>
+    <main class="flex-1 px-6 py-8 lg:px-12 max-w-6xl mx-auto w-full relative">
+
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="view-section animate-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div
+                    class="md:col-span-2 bg-indigo text-white rounded-3xl p-8 relative overflow-hidden shadow-tactile flex flex-col justify-between min-h-[240px]">
+                    <div
+                        class="absolute right-0 top-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-16 -mt-16 pointer-events-none">
+                    </div>
+                    <div
+                        class="absolute left-0 bottom-0 w-32 h-32 bg-orange opacity-20 rounded-full -ml-10 -mb-10 pointer-events-none">
+                    </div>
+                    <div class="relative z-10 flex justify-between items-start">
+                        <div>
+                            <p class="font-sans text-indigo-200 font-medium mb-1 tracking-wide">TOTAL BALANCE</p>
+                            <h1 class="font-mono text-5xl lg:text-7xl font-bold tracking-tight text-white mb-2">
+                                $24,850<span class="text-3xl text-indigo-300">.00</span>
+                            </h1>
+                            <div
+                                class="flex items-center gap-2 text-indigo-100 bg-indigo-dark/30 w-fit px-3 py-1 rounded-lg backdrop-blur-sm">
+                                <span class="material-symbols-outlined text-sm">trending_up</span>
+                                <span class="text-sm font-medium">+2.4% this month</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative z-10 mt-8 flex gap-4">
+                        <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 flex-1 border border-white/10">
+                            <p class="text-indigo-100 text-xs uppercase font-bold mb-1">Income</p>
+                            <p class="font-mono text-2xl font-bold">$6,240</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 flex-1 border border-white/10">
+                            <p class="text-indigo-100 text-xs uppercase font-bold mb-1">Expenses</p>
+                            <p class="font-mono text-2xl font-bold">$3,890</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-4 justify-center">
+                    <button
+                        class="group flex-1 bg-white border-2 border-indigo text-indigo hover:bg-indigo hover:text-white rounded-2xl p-6 transition-all shadow-tactile hover:shadow-tactile-hover translate-y-0 hover:translate-y-0.5 flex items-center justify-between">
+                        <div class="text-left">
+                            <span class="block font-bold text-lg">Add Income</span>
+                            <span class="text-sm opacity-70 group-hover:text-indigo-100">Paycheck, Freelance,
+                                etc.</span>
+                        </div>
+                        <div
+                            class="w-12 h-12 rounded-full bg-indigo/10 group-hover:bg-white/20 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl">arrow_downward</span>
+                        </div>
+                    </button>
+                    <button
+                        class="group flex-1 bg-white border-2 border-orange text-orange hover:bg-orange hover:text-white rounded-2xl p-6 transition-all shadow-tactile hover:shadow-tactile-hover translate-y-0 hover:translate-y-0.5 flex items-center justify-between">
+                        <div class="text-left">
+                            <span class="block font-bold text-lg">Add Expense</span>
+                            <span class="text-sm opacity-70 group-hover:text-orange-100">Food, Bills, Shopping</span>
+                        </div>
+                        <div
+                            class="w-12 h-12 rounded-full bg-orange/10 group-hover:bg-white/20 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl">arrow_upward</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+                    <section class="bg-white rounded-3xl p-8 shadow-card border border-slate-100">
+                        <div class="flex justify-between items-center mb-8">
+                            <h2 class="text-2xl font-bold text-slate-dark flex items-center gap-3">
+                                <span class="w-2 h-8 bg-orange rounded-full"></span>
+                                Savings Goal
+                            </h2>
+                            <button class="text-slate-400 hover:text-indigo transition-colors">
+                                <span class="material-symbols-outlined">more_horiz</span>
+                            </button>
+                        </div>
+                        <div class="flex flex-col md:flex-row items-center gap-10">
+                            <div class="relative w-40 h-40 flex-shrink-0">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <circle class="text-slate-100 stroke-current" cx="50" cy="50" fill="transparent"
+                                        r="40" stroke-width="12"></circle>
+                                    <circle class="text-indigo progress-ring-circle stroke-current" cx="50" cy="50"
+                                        fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="62.8"
+                                        stroke-linecap="round" stroke-width="12"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                                    <span class="font-mono text-3xl font-bold text-indigo">75%</span>
+                                </div>
+                            </div>
+                            <div class="flex-1 w-full">
+                                <div class="flex justify-between items-end mb-2">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-slate-dark mb-1">New Car Fund</h3>
+                                        <p class="text-slate-500 font-medium">Target: Dec 2024</p>
+                                    </div>
+                                    <div
+                                        class="w-12 h-12 bg-indigo/10 rounded-xl flex items-center justify-center text-indigo">
+                                        <span class="material-symbols-outlined">directions_car</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 mt-6">
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                        <span
+                                            class="text-xs font-bold text-slate-400 uppercase tracking-wider">Saved</span>
+                                        <p class="font-mono text-xl font-bold text-slate-dark mt-1">$15,000</p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                        <span
+                                            class="text-xs font-bold text-slate-400 uppercase tracking-wider">Remaining</span>
+                                        <p class="font-mono text-xl font-bold text-slate-400 mt-1">$5,000</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <section
+                            class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 flex items-center gap-4">
+                            <div class="relative w-20 h-20 flex-shrink-0">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <circle class="text-slate-100 stroke-current" cx="50" cy="50" fill="transparent"
+                                        r="40" stroke-width="10"></circle>
+                                    <circle class="text-orange progress-ring-circle stroke-current" cx="50" cy="50"
+                                        fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="100"
+                                        stroke-linecap="round" stroke-width="10"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-orange">restaurant</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-sm font-bold uppercase">Dining</p>
+                                <p class="font-mono text-xl font-bold text-slate-dark">$450.00</p>
+                            </div>
+                        </section>
+                        <section
+                            class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 flex items-center gap-4">
+                            <div class="relative w-20 h-20 flex-shrink-0">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <circle class="text-slate-100 stroke-current" cx="50" cy="50" fill="transparent"
+                                        r="40" stroke-width="10"></circle>
+                                    <circle class="text-indigo progress-ring-circle stroke-current" cx="50" cy="50"
+                                        fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="40"
+                                        stroke-linecap="round" stroke-width="10"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-indigo">shopping_bag</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-sm font-bold uppercase">Shopping</p>
+                                <p class="font-mono text-xl font-bold text-slate-dark">$820.00</p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="lg:col-span-1">
+                    <section
+                        class="bg-white rounded-3xl p-8 h-full min-h-[500px] shadow-card border border-slate-100 relative">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-slate-dark">Recent</h2>
+                            <a class="text-indigo font-bold text-sm hover:underline" href="#">View All</a>
+                        </div>
+                        <div class="space-y-4">
+                            <div
+                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 bg-orange/10 text-orange rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <span class="material-symbols-outlined">shopping_cart</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-dark text-base">Whole Foods</p>
+                                        <span
+                                            class="inline-block px-2 py-0.5 rounded-md bg-orange text-white text-[10px] font-bold uppercase tracking-wider mt-1">Groceries</span>
+                                    </div>
+                                </div>
+                                <span class="font-mono text-base font-bold text-slate-dark">-$124.50</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 bg-indigo/10 text-indigo rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <span class="material-symbols-outlined">work</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-dark text-base">Design Project</p>
+                                        <span
+                                            class="inline-block px-2 py-0.5 rounded-md bg-indigo text-white text-[10px] font-bold uppercase tracking-wider mt-1">Income</span>
+                                    </div>
+                                </div>
+                                <span class="font-mono text-base font-bold text-indigo">+$1,500.00</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 bg-pink-100 text-pink-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <span class="material-symbols-outlined">restaurant</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-dark text-base">Bistrot Leo</p>
+                                        <span
+                                            class="inline-block px-2 py-0.5 rounded-md bg-pink-500 text-white text-[10px] font-bold uppercase tracking-wider mt-1">Dining</span>
+                                    </div>
+                                </div>
+                                <span class="font-mono text-base font-bold text-slate-dark">-$85.00</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <span class="material-symbols-outlined">bolt</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-dark text-base">Electric Bill</p>
+                                        <span
+                                            class="inline-block px-2 py-0.5 rounded-md bg-yellow-500 text-white text-[10px] font-bold uppercase tracking-wider mt-1">Utilities</span>
+                                    </div>
+                                </div>
+                                <span class="font-mono text-base font-bold text-slate-dark">-$145.20</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <span class="material-symbols-outlined">movie</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-dark text-base">Cinema 4</p>
+                                        <span
+                                            class="inline-block px-2 py-0.5 rounded-md bg-purple-500 text-white text-[10px] font-bold uppercase tracking-wider mt-1">Fun</span>
+                                    </div>
+                                </div>
+                                <span class="font-mono text-base font-bold text-slate-dark">-$32.00</span>
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-slate-100">
+                            <button
+                                class="w-full py-4 bg-slate-100 text-slate-dark font-bold rounded-xl hover:bg-indigo hover:text-white transition-colors">
+                                Load More Activity
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY VIEW -->
+        <div id="view-history" class="view-section hidden animate-fade-in">
+            <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <h1 class="text-4xl font-bold text-slate-dark mb-2">Activity Feed</h1>
+                    <p class="text-slate-500 font-medium">Track your financial journey.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                    <div class="relative flex-1 sm:w-64">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <span class="material-symbols-outlined">search</span>
+                        </span>
+                        <input
+                            class="w-full py-3 pl-10 pr-4 rounded-xl border-2 border-slate-200 focus:border-indigo focus:ring-0 text-slate-dark font-medium bg-white shadow-sm placeholder-slate-400"
+                            placeholder="Search transactions..." type="text" />
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-3 mb-12">
+                <button
+                    class="bg-indigo text-white px-5 py-2.5 rounded-full font-bold shadow-tactile hover:shadow-tactile-hover hover:translate-y-[1px] transition-all flex items-center gap-2">
+                    <span>All</span>
+                </button>
+                <button
+                    class="bg-white text-orange border-2 border-orange px-5 py-2.5 rounded-full font-bold shadow-sm hover:bg-orange hover:text-white transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px]">restaurant</span>
+                    Food
+                </button>
+                <button
+                    class="bg-white text-teal border-2 border-teal px-5 py-2.5 rounded-full font-bold shadow-sm hover:bg-teal hover:text-white transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px]">payments</span>
+                    Income
+                </button>
+                <button
+                    class="bg-white text-pink border-2 border-pink px-5 py-2.5 rounded-full font-bold shadow-sm hover:bg-pink hover:text-white transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+                    Shopping
+                </button>
+                <button
+                    class="bg-white text-slate-400 border-2 border-slate-200 px-5 py-2.5 rounded-full font-bold shadow-sm hover:border-slate-400 hover:text-slate-600 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px]">add</span>
+                    More
+                </button>
+            </div>
+            <div class="flex flex-col lg:flex-row gap-8 items-start">
+                <div class="flex-1 w-full space-y-8">
+                    <div>
+                        <h3 class="text-3xl font-sans font-bold text-slate-dark mb-6 border-l-8 border-indigo pl-4">
+                            August
+                            2024</h3>
+                        <div class="space-y-4">
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-card border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-16 h-16 bg-orange/10 text-orange rounded-2xl flex flex-shrink-0 items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                                        <span class="material-symbols-outlined text-3xl">restaurant</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xl text-slate-dark">Bistrot Leo</h4>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span
+                                                class="px-2.5 py-1 rounded-md bg-orange text-white text-xs font-bold uppercase tracking-wider">Food</span>
+                                            <span class="text-slate-400 text-sm font-medium">Aug 24, 8:30 PM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right pl-20 sm:pl-0">
+                                    <p class="font-mono text-2xl font-bold text-slate-dark">-$85.00</p>
+                                    <p class="text-slate-400 text-sm font-medium">Credit Card •••• 4242</p>
+                                </div>
+                            </div>
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-card border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-16 h-16 bg-teal/10 text-teal rounded-2xl flex flex-shrink-0 items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                                        <span class="material-symbols-outlined text-3xl">work</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xl text-slate-dark">Freelance Project</h4>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span
+                                                class="px-2.5 py-1 rounded-md bg-teal text-white text-xs font-bold uppercase tracking-wider">Income</span>
+                                            <span class="text-slate-400 text-sm font-medium">Aug 22, 10:00 AM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right pl-20 sm:pl-0">
+                                    <p class="font-mono text-2xl font-bold text-teal">+$1,500.00</p>
+                                    <p class="text-slate-400 text-sm font-medium">Direct Deposit</p>
+                                </div>
+                            </div>
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-card border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-16 h-16 bg-pink-100 text-pink-600 rounded-2xl flex flex-shrink-0 items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                                        <span class="material-symbols-outlined text-3xl">shopping_bag</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xl text-slate-dark">Uniqlo Store</h4>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span
+                                                class="px-2.5 py-1 rounded-md bg-pink-500 text-white text-xs font-bold uppercase tracking-wider">Shopping</span>
+                                            <span class="text-slate-400 text-sm font-medium">Aug 20, 4:15 PM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right pl-20 sm:pl-0">
+                                    <p class="font-mono text-2xl font-bold text-slate-dark">-$124.50</p>
+                                    <p class="text-slate-400 text-sm font-medium">Debit Card •••• 8812</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-12">
+                        <h3
+                            class="text-3xl font-sans font-bold text-slate-dark mb-6 border-l-8 border-slate-300 pl-4 text-slate-400">
+                            July 2024</h3>
+                        <div class="space-y-4 opacity-80 hover:opacity-100 transition-opacity">
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-card border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-16 h-16 bg-indigo/10 text-indigo rounded-2xl flex flex-shrink-0 items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                                        <span class="material-symbols-outlined text-3xl">bolt</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xl text-slate-dark">Electric Company</h4>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span
+                                                class="px-2.5 py-1 rounded-md bg-indigo text-white text-xs font-bold uppercase tracking-wider">Utilities</span>
+                                            <span class="text-slate-400 text-sm font-medium">Jul 28, 9:00 AM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right pl-20 sm:pl-0">
+                                    <p class="font-mono text-2xl font-bold text-slate-dark">-$145.20</p>
+                                    <p class="text-slate-400 text-sm font-medium">Auto Pay</p>
+                                </div>
+                            </div>
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-card border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-16 h-16 bg-orange/10 text-orange rounded-2xl flex flex-shrink-0 items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                                        <span class="material-symbols-outlined text-3xl">local_gas_station</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xl text-slate-dark">Shell Station</h4>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span
+                                                class="px-2.5 py-1 rounded-md bg-orange text-white text-xs font-bold uppercase tracking-wider">Transport</span>
+                                            <span class="text-slate-400 text-sm font-medium">Jul 25, 6:45 PM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right pl-20 sm:pl-0">
+                                    <p class="font-mono text-2xl font-bold text-slate-dark">-$45.00</p>
+                                    <p class="text-slate-400 text-sm font-medium">Debit Card •••• 8812</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 text-center">
+                            <button
+                                class="px-8 py-3 bg-slate-200 text-slate-600 hover:bg-indigo hover:text-white font-bold rounded-xl transition-colors shadow-sm">
+                                Load Older Activity
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-80 w-full flex-shrink-0 order-first lg:order-last">
+                    <div
+                        class="bg-indigo text-white rounded-3xl p-6 shadow-floating sticky top-32 overflow-hidden relative">
+                        <div
+                            class="absolute right-0 top-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 pointer-events-none">
+                        </div>
+                        <div
+                            class="absolute left-0 bottom-0 w-24 h-24 bg-orange opacity-20 rounded-full -ml-8 -mb-8 pointer-events-none">
+                        </div>
+                        <h3 class="text-lg font-bold mb-6 flex items-center gap-2 relative z-10">
+                            <span class="material-symbols-outlined">analytics</span>
+                            Quick Stats
+                        </h3>
+                        <div class="space-y-6 relative z-10">
+                            <div>
+                                <p class="text-indigo-200 text-xs font-bold uppercase tracking-widest mb-1">Total Spent
+                                </p>
+                                <p class="font-mono text-4xl font-bold tracking-tight text-white">$254.50</p>
+                                <div class="w-full bg-indigo-dark/50 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-orange h-full rounded-full" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-indigo-200 text-xs font-bold uppercase tracking-widest mb-1">Total Earned
+                                </p>
+                                <p class="font-mono text-4xl font-bold tracking-tight text-teal-light">+$1,500.00</p>
+                                <div class="w-full bg-indigo-dark/50 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-teal h-full rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-white/10 relative z-10">
+                            <p class="text-indigo-200 text-sm mb-3">Viewing <span class="text-white font-bold">All
+                                    Transactions</span> for August.</p>
+                            <button
+                                class="w-full bg-white text-indigo font-bold py-3 rounded-xl hover:bg-indigo-50 transition-colors shadow-tactile hover:shadow-tactile-hover hover:translate-y-[1px]">
+                                Export Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GOALS VIEW -->
+        <div id="view-goals" class="view-section hidden animate-fade-in">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                <div>
+                    <h1 class="font-bold text-4xl text-slate-dark tracking-tight">Savings Goals</h1>
+                    <p class="text-slate-500 font-medium mt-2">Track your progress towards your dreams.</p>
+                </div>
+                <button
+                    class="bg-indigo text-white font-bold py-3 px-6 rounded-xl shadow-tactile hover:shadow-tactile-hover hover:translate-y-0.5 transition-all flex items-center gap-2">
+                    <span class="material-symbols-outlined">add</span>
+                    New Goal
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                <div
+                    class="bg-white rounded-3xl p-8 shadow-card border border-slate-100 flex flex-col items-center relative overflow-hidden group hover:border-indigo-200 transition-colors">
+                    <div class="absolute top-4 right-4">
+                        <button class="text-slate-300 hover:text-indigo transition-colors">
+                            <span class="material-symbols-outlined">more_vert</span>
+                        </button>
+                    </div>
+                    <div class="relative w-48 h-48 mb-6">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle class="text-slate-100 stroke-current" cx="50" cy="50" fill="transparent" r="40"
+                                stroke-width="8"></circle>
+                            <circle class="text-indigo progress-ring-circle stroke-current" cx="50" cy="50"
+                                fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="62.8"
+                                stroke-linecap="round" stroke-width="8"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center flex-col">
+                            <span class="material-symbols-outlined text-4xl text-indigo mb-1">directions_car</span>
+                            <span class="font-mono text-3xl font-bold text-slate-dark">75%</span>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-dark mb-1">New Car Fund</h3>
+                    <p class="text-slate-400 font-medium text-sm mb-6">Target: Dec 2024</p>
+                    <div class="w-full grid grid-cols-2 gap-4 text-center">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Current</span>
+                            <span class="font-mono text-lg font-bold text-indigo">$15,000</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Target</span>
+                            <span class="font-mono text-lg font-bold text-slate-dark">$20,000</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 w-full text-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Remaining Balance:
+                        </span>
+                        <span class="font-mono text-sm font-bold text-slate-500">$5,000</span>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-3xl p-8 shadow-card border border-slate-100 flex flex-col items-center relative overflow-hidden group hover:border-indigo-200 transition-colors">
+                    <div class="absolute top-4 right-4">
+                        <button class="text-slate-300 hover:text-indigo transition-colors">
+                            <span class="material-symbols-outlined">more_vert</span>
+                        </button>
+                    </div>
+                    <div class="relative w-48 h-48 mb-6">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle class="text-slate-100 stroke-current" cx="50" cy="50" fill="transparent" r="40"
+                                stroke-width="8"></circle>
+                            <circle class="text-indigo progress-ring-circle stroke-current" cx="50" cy="50"
+                                fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="188.4"
+                                stroke-linecap="round" stroke-width="8"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center flex-col">
+                            <span class="material-symbols-outlined text-4xl text-indigo mb-1">flight</span>
+                            <span class="font-mono text-3xl font-bold text-slate-dark">25%</span>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-dark mb-1">Japan Trip</h3>
+                    <p class="text-slate-400 font-medium text-sm mb-6">Target: Mar 2025</p>
+                    <div class="w-full grid grid-cols-2 gap-4 text-center">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Current</span>
+                            <span class="font-mono text-lg font-bold text-indigo">$2,500</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Target</span>
+                            <span class="font-mono text-lg font-bold text-slate-dark">$10,000</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 w-full text-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Remaining Balance:
+                        </span>
+                        <span class="font-mono text-sm font-bold text-slate-500">$7,500</span>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-3xl p-8 shadow-card border border-slate-100 flex flex-col items-center relative overflow-hidden group hover:border-indigo-200 transition-colors">
+                    <div class="absolute top-4 right-4">
+                        <button class="text-slate-300 hover:text-indigo transition-colors">
+                            <span class="material-symbols-outlined">more_vert</span>
+                        </button>
+                    </div>
+                    <div class="relative w-48 h-48 mb-6">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle class="text-slate-100 stroke-current" cx="50" cy="50" fill="transparent" r="40"
+                                stroke-width="8"></circle>
+                            <circle class="text-indigo progress-ring-circle stroke-current" cx="50" cy="50"
+                                fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="125.6"
+                                stroke-linecap="round" stroke-width="8"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center flex-col">
+                            <span class="material-symbols-outlined text-4xl text-indigo mb-1">laptop_mac</span>
+                            <span class="font-mono text-3xl font-bold text-slate-dark">50%</span>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-dark mb-1">MacBook Pro</h3>
+                    <p class="text-slate-400 font-medium text-sm mb-6">Target: Next Month</p>
+                    <div class="w-full grid grid-cols-2 gap-4 text-center">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Current</span>
+                            <span class="font-mono text-lg font-bold text-indigo">$1,500</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Target</span>
+                            <span class="font-mono text-lg font-bold text-slate-dark">$3,000</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 w-full text-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Remaining Balance:
+                        </span>
+                        <span class="font-mono text-sm font-bold text-slate-500">$1,500</span>
+                    </div>
+                </div>
+                <button
+                    class="rounded-3xl p-8 border-4 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-indigo hover:text-indigo hover:bg-indigo-bg/30 transition-all min-h-[460px] group cursor-pointer">
+                    <div
+                        class="w-20 h-20 rounded-full bg-slate-100 group-hover:bg-indigo group-hover:text-white flex items-center justify-center mb-4 transition-colors">
+                        <span class="material-symbols-outlined text-4xl">add</span>
+                    </div>
+                    <span class="text-xl font-bold">Create New Goal</span>
+                    <span class="text-sm font-medium mt-2 opacity-70">Start saving for something new</span>
+                </button>
+            </div>
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="font-bold text-3xl text-slate-dark tracking-tight">Monthly Budgets</h2>
+                    <p class="text-slate-500 font-medium mt-2">Manage your spending limits.</p>
+                </div>
+                <button class="text-indigo font-bold hover:underline">Manage Categories</button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-bg flex items-center justify-center text-indigo">
+                                <span class="material-symbols-outlined">restaurant</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-dark">Dining Out</h4>
+                                <p class="text-xs font-bold text-slate-400 uppercase">Monthly Limit</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-mono text-2xl font-bold text-slate-dark">$450</span>
+                            <span class="font-mono text-sm text-slate-400"> / $800</span>
+                        </div>
+                    </div>
+                    <div class="relative h-4 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div class="absolute h-full bg-indigo rounded-full progress-bar-fill" style="width: 56%"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm font-medium">
+                        <span class="text-indigo font-bold">56% Used</span>
+                        <span class="text-slate-400">$350 remaining</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-orange-bg flex items-center justify-center text-orange">
+                                <span class="material-symbols-outlined">shopping_bag</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-dark">Shopping</h4>
+                                <p class="text-xs font-bold text-slate-400 uppercase">Monthly Limit</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-mono text-2xl font-bold text-slate-dark">$820</span>
+                            <span class="font-mono text-sm text-slate-400"> / $900</span>
+                        </div>
+                    </div>
+                    <div class="relative h-4 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div class="absolute h-full bg-orange rounded-full progress-bar-fill" style="width: 91%"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm font-medium">
+                        <span class="text-orange font-bold">91% Used</span>
+                        <span class="text-slate-400">$80 remaining</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-bg flex items-center justify-center text-indigo">
+                                <span class="material-symbols-outlined">local_gas_station</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-dark">Transportation</h4>
+                                <p class="text-xs font-bold text-slate-400 uppercase">Monthly Limit</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-mono text-2xl font-bold text-slate-dark">$120</span>
+                            <span class="font-mono text-sm text-slate-400"> / $300</span>
+                        </div>
+                    </div>
+                    <div class="relative h-4 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div class="absolute h-full bg-indigo rounded-full progress-bar-fill" style="width: 40%"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm font-medium">
+                        <span class="text-indigo font-bold">40% Used</span>
+                        <span class="text-slate-400">$180 remaining</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-orange-bg flex items-center justify-center text-orange">
+                                <span class="material-symbols-outlined">movie</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-dark">Entertainment</h4>
+                                <p class="text-xs font-bold text-slate-400 uppercase">Monthly Limit</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-mono text-2xl font-bold text-slate-dark">$190</span>
+                            <span class="font-mono text-sm text-slate-400"> / $200</span>
+                        </div>
+                    </div>
+                    <div class="relative h-4 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div class="absolute h-full bg-orange rounded-full progress-bar-fill" style="width: 95%"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm font-medium">
+                        <span class="text-orange font-bold">95% Used</span>
+                        <span class="text-slate-400">$10 remaining</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="mt-auto border-t border-slate-200 py-8 bg-white w-full">
+        <div
+            class="max-w-6xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center text-slate-400 text-sm font-medium w-full">
+            <p>© 2024 Vibrant Ledger. Finances Reimagined.</p>
+            <div class="flex gap-6 mt-4 md:mt-0">
+                <a class="hover:text-indigo transition-colors" href="#">Privacy</a>
+                <a class="hover:text-indigo transition-colors" href="#">Terms</a>
+                <a class="hover:text-indigo transition-colors" href="#">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function switchTab(tabId) {
+            // Hide all views
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(view => {
+                view.classList.add('hidden');
+            });
+
+            // Show selected view
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+
+            // Reset all nav links styles
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('text-indigo', 'border-indigo');
+                link.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            // Set active nav link style for desktop
+            const activeLink = document.getElementById('nav-' + tabId);
+            if (activeLink) {
+                activeLink.classList.remove('text-slate-400', 'border-transparent');
+                activeLink.classList.add('text-indigo', 'border-indigo');
+            }
+
+            // Set active nav link style for mobile
+            const activeMobileLink = document.getElementById('nav-mobile-' + tabId);
+            if (activeMobileLink) {
+                activeMobileLink.classList.remove('text-slate-400', 'border-transparent');
+                activeMobileLink.classList.add('text-indigo', 'border-indigo');
+            }
+
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+    <style>
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body>
+
+</html>
