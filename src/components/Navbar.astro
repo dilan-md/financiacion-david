@@ -1,6 +1,7 @@
 ---
 const pathname = new URL(Astro.request.url).pathname;
 const currentPath = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
+import ThemeToggle from "./ThemeToggle.astro";
 ---
 
 <nav
@@ -36,6 +37,7 @@ const currentPath = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
                 </div>
             </div>
             <div class="flex items-center gap-4 md:hidden">
+                <ThemeToggle />
                 <div
                     class="bg-slate-100 rounded-full p-1 pr-4 flex items-center gap-3 border border-slate-200"
                 >
@@ -49,6 +51,7 @@ const currentPath = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
         </div>
 
         <div class="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             <div
                 class="bg-slate-100 rounded-full p-1 pr-4 flex items-center gap-3 border border-slate-200"
             >
@@ -58,6 +61,15 @@ const currentPath = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuA95F-Jn7rj7RaszPbcQNIva-1w7s9xhXoia9MC5kswawawrH4zKRiCjTz_81qJ9hyAPA5C-6ZwRnrGMUYektWeirFee6L-mEtQ5PcDDA0pqU95Zm88Wmpux6DIarB4-b_d4B9cgp5B-tMo6-4euo1WaZdrB6BFCrH1F_RyWI83YTTSizAk-WX9rZprkffefxG5NbyK6dQiXmiMGHpuBGh9_IWjQaYLHNFLRm5e3O5FAdpWGaigcb5JLjH9Ihxb6f5utdB7quGJiUI"
                 />
                 <span class="font-bold text-sm text-slate-dark">David G.</span>
+                <button
+                    id="reset-app-btn"
+                    title="Reset All Data"
+                    class="ml-2 text-slate-300 hover:text-red-500 transition-colors"
+                >
+                    <span class="material-symbols-outlined text-sm"
+                        >restart_alt</span
+                    >
+                </button>
             </div>
         </div>
 
@@ -83,3 +95,23 @@ const currentPath = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
         </div>
     </div>
 </nav>
+
+<script>
+    import { resetAllData } from "../utils/store";
+
+    function initNavbar() {
+        const resetBtn = document.getElementById("reset-app-btn");
+        resetBtn?.addEventListener("click", () => {
+            if (
+                confirm(
+                    "DANGER: This will delete ALL transactions, goals, and budgets. This action cannot be undone. Are you sure?",
+                )
+            ) {
+                resetAllData();
+                window.location.href = "/";
+            }
+        });
+    }
+
+    document.addEventListener("astro:page-load", initNavbar);
+</script>

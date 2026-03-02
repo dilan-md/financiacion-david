@@ -1,8 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
-import Footer from "../components/Footer.astro";
 import BalanceCard from "../components/BalanceCard.astro";
+import TransactionModal from "../components/modals/TransactionModal.astro";
 ---
 
 <Layout title="Dashboard - Vibrant Ledger">
@@ -13,6 +13,7 @@ import BalanceCard from "../components/BalanceCard.astro";
                 <BalanceCard />
                 <div class="flex flex-col gap-4 justify-center">
                     <button
+                        onclick="window.openTransactionModal('income')"
                         class="group flex-1 bg-white border-2 border-indigo text-indigo hover:bg-indigo hover:text-white rounded-2xl p-6 transition-all shadow-tactile hover:shadow-tactile-hover translate-y-0 hover:translate-y-0.5 flex items-center justify-between"
                     >
                         <div class="text-left">
@@ -33,6 +34,7 @@ import BalanceCard from "../components/BalanceCard.astro";
                         </div>
                     </button>
                     <button
+                        onclick="window.openTransactionModal('expense')"
                         class="group flex-1 bg-white border-2 border-orange text-orange hover:bg-orange hover:text-white rounded-2xl p-6 transition-all shadow-tactile hover:shadow-tactile-hover translate-y-0 hover:translate-y-0.5 flex items-center justify-between"
                     >
                         <div class="text-left">
@@ -55,6 +57,7 @@ import BalanceCard from "../components/BalanceCard.astro";
                 </div>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column: Goals and Categories (2/3) -->
                 <div class="lg:col-span-2 space-y-8">
                     <section
                         class="bg-white rounded-3xl p-8 shadow-card border border-slate-100"
@@ -67,201 +70,34 @@ import BalanceCard from "../components/BalanceCard.astro";
                                 ></span>
                                 Savings Goal
                             </h2>
-                            <button
+                            <a
+                                href="/goals"
                                 class="text-slate-400 hover:text-indigo transition-colors"
                             >
                                 <span class="material-symbols-outlined"
                                     >more_horiz</span
                                 >
-                            </button>
+                            </a>
                         </div>
-                        <div
-                            class="flex flex-col md:flex-row items-center gap-10"
-                        >
-                            <div class="relative w-40 h-40 flex-shrink-0">
-                                <svg
-                                    class="w-full h-full"
-                                    viewBox="0 0 100 100"
-                                >
-                                    <circle
-                                        class="text-slate-100 stroke-current"
-                                        cx="50"
-                                        cy="50"
-                                        fill="transparent"
-                                        r="40"
-                                        stroke-width="12"></circle>
-                                    <circle
-                                        class="text-indigo progress-ring-circle stroke-current"
-                                        cx="50"
-                                        cy="50"
-                                        fill="transparent"
-                                        r="40"
-                                        stroke-dasharray="251.2"
-                                        stroke-dashoffset="62.8"
-                                        stroke-linecap="round"
-                                        stroke-width="12"></circle>
-                                </svg>
-                                <div
-                                    class="absolute inset-0 flex items-center justify-center flex-col"
-                                >
-                                    <span
-                                        class="font-mono text-3xl font-bold text-indigo"
-                                        >75%</span
-                                    >
-                                </div>
-                            </div>
-                            <div class="flex-1 w-full">
-                                <div
-                                    class="flex justify-between items-end mb-2"
-                                >
-                                    <div>
-                                        <h3
-                                            class="text-xl font-bold text-slate-dark mb-1"
-                                        >
-                                            New Car Fund
-                                        </h3>
-                                        <p class="text-slate-500 font-medium">
-                                            Target: Dec 2024
-                                        </p>
-                                    </div>
-                                    <div
-                                        class="w-12 h-12 bg-indigo/10 rounded-xl flex items-center justify-center text-indigo"
-                                    >
-                                        <span class="material-symbols-outlined"
-                                            >directions_car</span
-                                        >
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4 mt-6">
-                                    <div
-                                        class="bg-slate-50 p-4 rounded-xl border border-slate-100"
-                                    >
-                                        <span
-                                            class="text-xs font-bold text-slate-400 uppercase tracking-wider"
-                                            >Saved</span
-                                        >
-                                        <p
-                                            class="font-mono text-xl font-bold text-slate-dark mt-1"
-                                        >
-                                            $15,000
-                                        </p>
-                                    </div>
-                                    <div
-                                        class="bg-slate-50 p-4 rounded-xl border border-slate-100"
-                                    >
-                                        <span
-                                            class="text-xs font-bold text-slate-400 uppercase tracking-wider"
-                                            >Remaining</span
-                                        >
-                                        <p
-                                            class="font-mono text-xl font-bold text-slate-400 mt-1"
-                                        >
-                                            $5,000
-                                        </p>
-                                    </div>
-                                </div>
+                        <div id="goal-container">
+                            <!-- Dynamic Goal Content -->
+                            <div
+                                class="flex flex-col md:flex-row items-center gap-10 opacity-50"
+                            >
+                                <p>Loading goals...</p>
                             </div>
                         </div>
                     </section>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <section
-                            class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 flex items-center gap-4"
-                        >
-                            <div class="relative w-20 h-20 flex-shrink-0">
-                                <svg
-                                    class="w-full h-full"
-                                    viewBox="0 0 100 100"
-                                >
-                                    <circle
-                                        class="text-slate-100 stroke-current"
-                                        cx="50"
-                                        cy="50"
-                                        fill="transparent"
-                                        r="40"
-                                        stroke-width="10"></circle>
-                                    <circle
-                                        class="text-orange progress-ring-circle stroke-current"
-                                        cx="50"
-                                        cy="50"
-                                        fill="transparent"
-                                        r="40"
-                                        stroke-dasharray="251.2"
-                                        stroke-dashoffset="100"
-                                        stroke-linecap="round"
-                                        stroke-width="10"></circle>
-                                </svg>
-                                <div
-                                    class="absolute inset-0 flex items-center justify-center"
-                                >
-                                    <span
-                                        class="material-symbols-outlined text-orange"
-                                        >restaurant</span
-                                    >
-                                </div>
-                            </div>
-                            <div>
-                                <p
-                                    class="text-slate-400 text-sm font-bold uppercase"
-                                >
-                                    Dining
-                                </p>
-                                <p
-                                    class="font-mono text-xl font-bold text-slate-dark"
-                                >
-                                    $450.00
-                                </p>
-                            </div>
-                        </section>
-                        <section
-                            class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 flex items-center gap-4"
-                        >
-                            <div class="relative w-20 h-20 flex-shrink-0">
-                                <svg
-                                    class="w-full h-full"
-                                    viewBox="0 0 100 100"
-                                >
-                                    <circle
-                                        class="text-slate-100 stroke-current"
-                                        cx="50"
-                                        cy="50"
-                                        fill="transparent"
-                                        r="40"
-                                        stroke-width="10"></circle>
-                                    <circle
-                                        class="text-indigo progress-ring-circle stroke-current"
-                                        cx="50"
-                                        cy="50"
-                                        fill="transparent"
-                                        r="40"
-                                        stroke-dasharray="251.2"
-                                        stroke-dashoffset="40"
-                                        stroke-linecap="round"
-                                        stroke-width="10"></circle>
-                                </svg>
-                                <div
-                                    class="absolute inset-0 flex items-center justify-center"
-                                >
-                                    <span
-                                        class="material-symbols-outlined text-indigo"
-                                        >shopping_bag</span
-                                    >
-                                </div>
-                            </div>
-                            <div>
-                                <p
-                                    class="text-slate-400 text-sm font-bold uppercase"
-                                >
-                                    Shopping
-                                </p>
-                                <p
-                                    class="font-mono text-xl font-bold text-slate-dark"
-                                >
-                                    $820.00
-                                </p>
-                            </div>
-                        </section>
+
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 gap-6"
+                        id="dashboard-category-cards"
+                    >
+                        <!-- Dynamic Category Cards -->
                     </div>
                 </div>
+
+                <!-- Right Column: Recent Activity (1/3) -->
                 <div class="lg:col-span-1">
                     <section
                         class="bg-white rounded-3xl p-8 h-full min-h-[500px] shadow-card border border-slate-100 relative"
@@ -272,162 +108,237 @@ import BalanceCard from "../components/BalanceCard.astro";
                             </h2>
                             <a
                                 class="text-indigo font-bold text-sm hover:underline"
-                                href="#">View All</a
+                                href="/history">View All</a
                             >
                         </div>
-                        <div class="space-y-4">
-                            <div
-                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group"
-                            >
-                                <div class="flex items-center gap-4">
-                                    <div
-                                        class="w-12 h-12 bg-orange/10 text-orange rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
-                                    >
-                                        <span class="material-symbols-outlined"
-                                            >shopping_cart</span
-                                        >
-                                    </div>
-                                    <div>
-                                        <p
-                                            class="font-bold text-slate-dark text-base"
-                                        >
-                                            Whole Foods
-                                        </p>
-                                        <span
-                                            class="inline-block px-2 py-0.5 rounded-md bg-orange text-white text-[10px] font-bold uppercase tracking-wider mt-1"
-                                            >Groceries</span
-                                        >
-                                    </div>
-                                </div>
+                        <div class="space-y-4" id="recent-activity-list">
+                            <!-- Transactions will be injected here -->
+                            <div class="py-12 text-center text-slate-400">
                                 <span
-                                    class="font-mono text-base font-bold text-slate-dark"
-                                    >-$124.50</span
+                                    class="material-symbols-outlined text-4xl mb-2 block opacity-20"
+                                    >history</span
                                 >
-                            </div>
-                            <div
-                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group"
-                            >
-                                <div class="flex items-center gap-4">
-                                    <div
-                                        class="w-12 h-12 bg-indigo/10 text-indigo rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
-                                    >
-                                        <span class="material-symbols-outlined"
-                                            >work</span
-                                        >
-                                    </div>
-                                    <div>
-                                        <p
-                                            class="font-bold text-slate-dark text-base"
-                                        >
-                                            Design Project
-                                        </p>
-                                        <span
-                                            class="inline-block px-2 py-0.5 rounded-md bg-indigo text-white text-[10px] font-bold uppercase tracking-wider mt-1"
-                                            >Income</span
-                                        >
-                                    </div>
-                                </div>
-                                <span
-                                    class="font-mono text-base font-bold text-indigo"
-                                    >+$1,500.00</span
-                                >
-                            </div>
-                            <div
-                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group"
-                            >
-                                <div class="flex items-center gap-4">
-                                    <div
-                                        class="w-12 h-12 bg-pink-100 text-pink-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
-                                    >
-                                        <span class="material-symbols-outlined"
-                                            >restaurant</span
-                                        >
-                                    </div>
-                                    <div>
-                                        <p
-                                            class="font-bold text-slate-dark text-base"
-                                        >
-                                            Bistrot Leo
-                                        </p>
-                                        <span
-                                            class="inline-block px-2 py-0.5 rounded-md bg-pink-500 text-white text-[10px] font-bold uppercase tracking-wider mt-1"
-                                            >Dining</span
-                                        >
-                                    </div>
-                                </div>
-                                <span
-                                    class="font-mono text-base font-bold text-slate-dark"
-                                    >-$85.00</span
-                                >
-                            </div>
-                            <div
-                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group"
-                            >
-                                <div class="flex items-center gap-4">
-                                    <div
-                                        class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
-                                    >
-                                        <span class="material-symbols-outlined"
-                                            >bolt</span
-                                        >
-                                    </div>
-                                    <div>
-                                        <p
-                                            class="font-bold text-slate-dark text-base"
-                                        >
-                                            Electric Bill
-                                        </p>
-                                        <span
-                                            class="inline-block px-2 py-0.5 rounded-md bg-yellow-500 text-white text-[10px] font-bold uppercase tracking-wider mt-1"
-                                            >Utilities</span
-                                        >
-                                    </div>
-                                </div>
-                                <span
-                                    class="font-mono text-base font-bold text-slate-dark"
-                                    >-$145.20</span
-                                >
-                            </div>
-                            <div
-                                class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group"
-                            >
-                                <div class="flex items-center gap-4">
-                                    <div
-                                        class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
-                                    >
-                                        <span class="material-symbols-outlined"
-                                            >movie</span
-                                        >
-                                    </div>
-                                    <div>
-                                        <p
-                                            class="font-bold text-slate-dark text-base"
-                                        >
-                                            Cinema 4
-                                        </p>
-                                        <span
-                                            class="inline-block px-2 py-0.5 rounded-md bg-purple-500 text-white text-[10px] font-bold uppercase tracking-wider mt-1"
-                                            >Fun</span
-                                        >
-                                    </div>
-                                </div>
-                                <span
-                                    class="font-mono text-base font-bold text-slate-dark"
-                                    >-$32.00</span
-                                >
+                                <p class="text-sm font-medium">
+                                    No recent activity
+                                </p>
                             </div>
                         </div>
                         <div class="mt-8 pt-6 border-t border-slate-100">
-                            <button
-                                class="w-full py-4 bg-slate-100 text-slate-dark font-bold rounded-xl hover:bg-indigo hover:text-white transition-colors"
+                            <a
+                                href="/history"
+                                class="w-full py-4 bg-slate-100 text-slate-dark font-bold rounded-xl hover:bg-indigo hover:text-white transition-colors flex items-center justify-center"
                             >
-                                Load More Activity
-                            </button>
+                                View All Activity
+                            </a>
                         </div>
                     </section>
                 </div>
             </div>
         </div>
     </main>
-    <Footer />
+    <TransactionModal />
 </Layout>
+
+<script>
+    import {
+        getTransactions,
+        getGoals,
+        getBudgets,
+        formatCurrency,
+        parseLocalDate,
+    } from "../utils/store";
+
+    function renderDashboard() {
+        const activityContainer = document.getElementById(
+            "recent-activity-list",
+        );
+        const goalContainer = document.getElementById("goal-container");
+        const categoryCards = document.getElementById(
+            "dashboard-category-cards",
+        );
+
+        const transactions = getTransactions();
+        const goals = getGoals();
+        const budgets = getBudgets();
+
+        // 1. Render Recent Activity
+        if (activityContainer) {
+            const recent = transactions.slice(0, 5);
+            if (recent.length === 0) {
+                activityContainer.innerHTML = `
+                    <div class="py-12 text-center text-slate-400">
+                        <span class="material-symbols-outlined text-4xl mb-2 block opacity-20">history</span>
+                        <p class="text-sm font-medium">No recent activity</p>
+                    </div>
+                `;
+            } else {
+                const categoryIcons: Record<string, string> = {
+                    food: "restaurant",
+                    dining: "restaurant",
+                    shopping: "shopping_cart",
+                    transportation: "directions_car",
+                    bills: "bolt",
+                    entertainment: "movie",
+                    salary: "work",
+                    freelance: "laptop_mac",
+                    investments: "show_chart",
+                    other: "package",
+                };
+
+                activityContainer.innerHTML = recent
+                    .map((t) => {
+                        const category = t.category || "other";
+                        const icon = categoryIcons[category] || "payments";
+                        const isIncome = t.type === "income";
+                        const iconStyle = isIncome
+                            ? "bg-indigo/10 text-indigo"
+                            : "bg-orange/10 text-orange";
+                        const amountClass = isIncome
+                            ? "text-indigo"
+                            : "text-slate-dark";
+                        const prefix = isIncome ? "+" : "-";
+
+                        return `
+                        <div 
+                            onclick="window.openTransactionModal('${t.id}')"
+                            class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group"
+                        >
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 ${iconStyle} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined">${icon}</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-dark text-base">${t.note || category.charAt(0).toUpperCase() + category.slice(1)}</p>
+                                    <span class="inline-block px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-bold uppercase tracking-wider mt-1">
+                                        ${category.replace("_", " ")}
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="font-mono text-base font-bold ${amountClass}">${prefix}${formatCurrency(t.amount)}</span>
+                        </div>
+                    `;
+                    })
+                    .join("");
+            }
+        }
+
+        // 2. Render Primary Goal
+        if (goalContainer) {
+            if (goals.length > 0) {
+                const g = goals[0];
+                const progress =
+                    Math.min(100, Math.round((g.current / g.amount) * 100)) ||
+                    0;
+                const dashoffset = 251.2 - (251.2 * progress) / 100;
+
+                goalContainer.innerHTML = `
+                    <div class="flex flex-col md:flex-row items-center gap-10">
+                        <div class="relative w-40 h-40 flex-shrink-0">
+                            <svg class="w-full h-full" viewBox="0 0 100 100">
+                                <circle class="text-slate-100 stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-width="12"></circle>
+                                <circle class="text-indigo stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="${dashoffset}" stroke-linecap="round" stroke-width="12"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center flex-col">
+                                <span class="font-mono text-3xl font-bold text-indigo">${progress}%</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 w-full">
+                            <div class="flex justify-between items-end mb-2">
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-dark mb-1">${g.name}</h3>
+                                    <p class="text-slate-500 font-medium">Target: ${parseLocalDate(g.date).toLocaleDateString("default", { month: "short", year: "numeric" })}</p>
+                                </div>
+                                <div class="w-12 h-12 bg-indigo/10 rounded-xl flex items-center justify-center text-indigo">
+                                    <span class="material-symbols-outlined">${g.icon}</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-6">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Saved</span>
+                                    <p class="font-mono text-xl font-bold text-slate-dark mt-1">${formatCurrency(g.current)}</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Remaining</span>
+                                    <p class="font-mono text-xl font-bold text-slate-400 mt-1">${formatCurrency(Math.max(0, g.amount - g.current))}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                goalContainer.innerHTML = `
+                    <div class="py-10 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-2xl">
+                        <p>No active goals. Add one in the Goals page!</p>
+                        <a href="/goals" class="text-indigo font-bold mt-2 inline-block">Go to Goals</a>
+                    </div>
+                `;
+            }
+        }
+
+        // 3. Render Category Cards
+        if (categoryCards) {
+            const spendingByCategory: Record<string, number> = {};
+            transactions.forEach((t) => {
+                if (t.type === "expense")
+                    spendingByCategory[t.category] =
+                        (spendingByCategory[t.category] || 0) + t.amount;
+            });
+
+            // If no budgets/transactions, show placeholders
+            const topCategories = ["dining", "shopping"];
+            categoryCards.innerHTML = topCategories
+                .map((cat) => {
+                    const limit = budgets[cat] || 0;
+                    const spent = spendingByCategory[cat] || 0;
+                    const progress =
+                        limit > 0
+                            ? Math.min(100, Math.round((spent / limit) * 100))
+                            : 0;
+                    const dashoffset = 251.2 - (251.2 * progress) / 100;
+                    const icon =
+                        cat === "dining" ? "restaurant" : "shopping_bag";
+                    const color =
+                        cat === "dining" ? "text-orange" : "text-indigo";
+                    const strokeColor =
+                        cat === "dining" ? "text-orange" : "text-indigo";
+
+                    return `
+                    <section class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 flex items-center gap-4">
+                        <div class="relative w-20 h-20 flex-shrink-0">
+                            <svg class="w-full h-full" viewBox="0 0 100 100">
+                                <circle class="text-slate-100 stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-width="10"></circle>
+                                <circle class="${strokeColor} stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="${dashoffset}" stroke-linecap="round" stroke-width="10"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="material-symbols-outlined ${color}">${icon}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-sm font-bold uppercase">${cat}</p>
+                            <p class="font-mono text-xl font-bold text-slate-dark">${formatCurrency(spent)}</p>
+                        </div>
+                    </section>
+                `;
+                })
+                .join("");
+        }
+    }
+
+    document.addEventListener("astro:page-load", () => {
+        renderDashboard();
+    });
+
+    // Ensure we only listen once and it still works after navigation
+    if (!(window as any).hasTransactionsListener) {
+        window.addEventListener("transactions-updated", () => {
+            renderDashboard();
+        });
+        window.addEventListener("goals-updated", () => {
+            renderDashboard();
+        });
+        window.addEventListener("budgets-updated", () => {
+            renderDashboard();
+        });
+        (window as any).hasTransactionsListener = true;
+    }
+</script>

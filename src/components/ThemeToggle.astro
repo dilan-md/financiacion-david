@@ -1,0 +1,64 @@
+---
+
+---
+
+<button
+    class="theme-toggle relative w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-sm border-2 border-transparent overflow-hidden cursor-pointer"
+    aria-label="Toggle dark mode"
+>
+    <!-- Sun Icon: visible only in dark mode (click to go light) -->
+    <span class="material-symbols-outlined absolute theme-icon-sun">
+        light_mode
+    </span>
+    <!-- Moon Icon: visible only in light mode (click to go dark) -->
+    <span class="material-symbols-outlined absolute theme-icon-moon">
+        dark_mode
+    </span>
+</button>
+
+<style>
+    .theme-toggle {
+        background-color: #f1f5f9;
+        color: #64748b;
+    }
+    .theme-toggle:hover {
+        border-color: rgba(79, 70, 229, 0.2);
+        color: #4f46e5;
+    }
+
+    /* Dark mode button styles */
+    .dark .theme-toggle {
+        background-color: #1e293b;
+        border-color: #334155;
+        color: #94a3b8;
+    }
+    .dark .theme-toggle:hover {
+        color: #818cf8;
+    }
+
+    /* Icon visibility: pure CSS, no JS needed */
+    .theme-icon-sun {
+        opacity: 0;
+        transform: rotate(-90deg) scale(0);
+        transition:
+            opacity 0.4s ease,
+            transform 0.4s ease;
+    }
+    .theme-icon-moon {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+        transition:
+            opacity 0.4s ease,
+            transform 0.4s ease;
+    }
+
+    /* In dark mode: show sun, hide moon */
+    :global(.dark) .theme-icon-sun {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+    :global(.dark) .theme-icon-moon {
+        opacity: 0;
+        transform: rotate(90deg) scale(0);
+    }
+</style>

@@ -21,16 +21,26 @@
             <h1
                 class="font-mono text-5xl lg:text-7xl font-bold tracking-tight text-white mb-2"
             >
-                $24,850<span class="text-3xl text-indigo-300">.00</span>
+                <span id="balance-amount">$0.00</span>
             </h1>
             <div
-                class="flex items-center gap-2 text-indigo-100 bg-indigo-dark/30 w-fit px-3 py-1 rounded-lg backdrop-blur-sm"
+                id="growth-trend"
+                class="flex items-center gap-2 mt-4 text-indigo-100 opacity-0 transition-opacity duration-500"
             >
-                <span class="material-symbols-outlined text-sm"
+                <span id="growth-icon" class="material-symbols-outlined text-sm"
                     >trending_up</span
                 >
-                <span class="text-sm font-medium">+2.4% this month</span>
+                <span id="growth-percentage" class="text-sm font-medium"
+                    >+0% this month</span
+                >
             </div>
+            <p
+                class="mt-4 text-indigo-100 text-sm font-medium flex items-center gap-2"
+                id="savings-summary"
+            >
+                <span class="material-symbols-outlined text-sm">payments</span>
+                <span>Loading savings...</span>
+            </p>
         </div>
     </div>
     <div class="relative z-10 mt-8 flex gap-4">
@@ -40,7 +50,7 @@
             <p class="text-indigo-100 text-xs uppercase font-bold mb-1">
                 Income
             </p>
-            <p class="font-mono text-2xl font-bold">$6,240</p>
+            <p class="font-mono text-2xl font-bold" id="income-amount">$0.00</p>
         </div>
         <div
             class="bg-white/10 backdrop-blur-md rounded-xl p-4 flex-1 border border-white/10"
@@ -48,7 +58,94 @@
             <p class="text-indigo-100 text-xs uppercase font-bold mb-1">
                 Expenses
             </p>
-            <p class="font-mono text-2xl font-bold">$3,890</p>
+            <p class="font-mono text-2xl font-bold" id="expense-amount">
+                $0.00
+            </p>
         </div>
     </div>
 </div>
+
+<script>
+    import {
+        getBalanceOverview,
+        getSavingsTotal,
+        getMonthGrowthRate,
+        formatCurrency,
+    } from "../utils/store";
+
+    function updateBalanceUI() {
+        const balanceData = getBalanceOverview();
+        const savingsTotal = getSavingsTotal();
+        const growthRate = getMonthGrowthRate();
+
+        const balanceEl = document.getElementById("balance-amount");
+        const incomeEl = document.getElementById("income-amount");
+        const expenseEl = document.getElementById("expense-amount");
+        const savingsEl = document.getElementById("savings-summary");
+        const growthContainer = document.getElementById("growth-trend");
+        const growthIcon = document.getElementById("growth-icon");
+        const growthText = document.getElementById("growth-percentage");
+
+        if (balanceEl) {
+            const formatted = formatCurrency(
+                Math.abs(balanceData.totalBalance),
+            );
+            const sign = balanceData.totalBalance < 0 ? "-" : "";
+
+            if (formatted.includes(".")) {
+                const [whole, cents] = formatted.split(".");
+                balanceEl.innerHTML = `${sign}${whole}<span class="text-3xl text-indigo-300">.${cents}</span>`;
+            } else if (formatted.includes(",")) {
+                // es-CO uses , for decimals if they are present, but for 0 digits it might not
+                // This is a safety check
+                balanceEl.innerHTML = `${sign}${formatted}`;
+            } else {
+                balanceEl.innerHTML = `${sign}${formatted}`;
+            }
+        }
+
+        if (incomeEl) {
+            incomeEl.textContent = formatCurrency(balanceData.totalIncome);
+        }
+
+        if (expenseEl) {
+            expenseEl.textContent = formatCurrency(balanceData.totalExpense);
+        }
+
+        if (savingsEl) {
+            savingsEl.innerHTML = `
+                <span class="material-symbols-outlined text-sm">shopping_basket</span>
+                <span>You have <span class="text-white font-bold">${formatCurrency(savingsTotal)}</span> reserved for your goals</span>
+            `;
+        }
+
+        if (growthContainer && growthText && growthIcon) {
+            const isPositive = growthRate >= 0;
+            growthText.textContent = `${isPositive ? "+" : ""}${growthRate.toFixed(1)}% this month`;
+            growthIcon.textContent = isPositive
+                ? "trending_up"
+                : "trending_down";
+            growthContainer.classList.remove("opacity-0");
+
+            if (isPositive) {
+                growthContainer.classList.add("text-emerald-300");
+                growthContainer.classList.remove("text-orange-300");
+            } else {
+                growthContainer.classList.add("text-orange-300");
+                growthContainer.classList.remove("text-emerald-300");
+            }
+        }
+    }
+
+    document.addEventListener("astro:page-load", updateBalanceUI);
+
+    if (!(window as any).hasBalanceListener) {
+        window.addEventListener("transactions-updated", () => {
+            if (document.getElementById("balance-amount")) updateBalanceUI();
+        });
+        window.addEventListener("goals-updated", () => {
+            if (document.getElementById("balance-amount")) updateBalanceUI();
+        });
+        (window as any).hasBalanceListener = true;
+    }
+</script>

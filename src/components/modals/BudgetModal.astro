@@ -1,0 +1,275 @@
+---
+
+---
+
+<dialog
+    id="budget-modal"
+    class="backdrop:bg-slate-dark/40 backdrop:backdrop-blur-sm rounded-3xl p-0 border-0 shadow-floating fixed inset-0 m-auto open:animate-fade-in w-full max-w-lg bg-transparent"
+>
+    <div
+        class="bg-white rounded-3xl flex flex-col h-[80vh] max-h-[700px] overflow-hidden border border-slate-100 shadow-xl"
+    >
+        <header
+            class="flex justify-between items-center p-6 border-b border-slate-100"
+        >
+            <div>
+                <h2 class="text-2xl font-bold text-slate-dark tracking-tight">
+                    Manage Budgets
+                </h2>
+                <p class="text-slate-500 font-medium text-sm mt-1">
+                    Set monthly limits for your categories
+                </p>
+            </div>
+            <button
+                id="close-budget-modal"
+                class="text-slate-400 hover:text-indigo hover:bg-slate-100 w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+            >
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </header>
+
+        <form id="budget-form" class="flex-1 flex flex-col overflow-hidden">
+            <div class="p-6 overflow-y-auto flex-1 space-y-6">
+                <!-- Category Item -->
+                <div
+                    class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo transition-colors group"
+                >
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-indigo-bg flex items-center justify-center text-indigo"
+                        >
+                            <span class="material-symbols-outlined"
+                                >restaurant</span
+                            >
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-dark">
+                                Dining Out
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="relative w-32">
+                        <span
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-mono font-bold"
+                            >$</span
+                        >
+                        <input
+                            type="number"
+                            name="budget_dining"
+                            value="800"
+                            step="10"
+                            min="0"
+                            class="w-full py-2 pl-8 pr-3 rounded-lg border-2 border-slate-200 focus:border-indigo focus:ring-0 text-slate-dark font-mono font-bold bg-white text-right"
+                        />
+                    </div>
+                </div>
+
+                <!-- Category Item -->
+                <div
+                    class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-orange transition-colors group"
+                >
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-orange-bg flex items-center justify-center text-orange"
+                        >
+                            <span class="material-symbols-outlined"
+                                >shopping_bag</span
+                            >
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-dark">
+                                Shopping
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="relative w-32">
+                        <span
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-mono font-bold"
+                            >$</span
+                        >
+                        <input
+                            type="number"
+                            name="budget_shopping"
+                            value="900"
+                            step="10"
+                            min="0"
+                            class="w-full py-2 pl-8 pr-3 rounded-lg border-2 border-slate-200 focus:border-indigo focus:ring-0 text-slate-dark font-mono font-bold bg-white text-right"
+                        />
+                    </div>
+                </div>
+
+                <!-- Category Item -->
+                <div
+                    class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-teal transition-colors group"
+                >
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-teal/10 flex items-center justify-center text-teal"
+                        >
+                            <span class="material-symbols-outlined"
+                                >local_gas_station</span
+                            >
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-dark">
+                                Transportation
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="relative w-32">
+                        <span
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-mono font-bold"
+                            >$</span
+                        >
+                        <input
+                            type="number"
+                            name="budget_transport"
+                            value="300"
+                            step="10"
+                            min="0"
+                            class="w-full py-2 pl-8 pr-3 rounded-lg border-2 border-slate-200 focus:border-indigo focus:ring-0 text-slate-dark font-mono font-bold bg-white text-right"
+                        />
+                    </div>
+                </div>
+
+                <!-- Category Item -->
+                <div
+                    class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-pink-500 transition-colors group"
+                >
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center text-pink-600"
+                        >
+                            <span class="material-symbols-outlined">movie</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-dark">
+                                Entertainment
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="relative w-32">
+                        <span
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-mono font-bold"
+                            >$</span
+                        >
+                        <input
+                            type="number"
+                            name="budget_entertainment"
+                            value="200"
+                            step="10"
+                            min="0"
+                            class="w-full py-2 pl-8 pr-3 rounded-lg border-2 border-slate-200 focus:border-indigo focus:ring-0 text-slate-dark font-mono font-bold bg-white text-right"
+                        />
+                    </div>
+                </div>
+
+                <!-- Category Item -->
+                <div
+                    class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-slate-400 transition-colors group"
+                >
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-slate-200 flex items-center justify-center text-slate-500"
+                        >
+                            <span class="material-symbols-outlined">add</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base text-slate-500">
+                                Add Category
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-slate-100 bg-white">
+                <button
+                    type="submit"
+                    class="w-full py-4 rounded-xl text-white font-bold text-lg bg-slate-dark hover:bg-black transition-colors shadow-tactile hover:shadow-tactile-hover translate-y-0 hover:translate-y-[1px]"
+                >
+                    Save Budgets
+                </button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<script>
+    import { getBudgets, saveBudgets } from "../../utils/store";
+
+    function initBudgetModal() {
+        const modal = document.getElementById(
+            "budget-modal",
+        ) as HTMLDialogElement;
+        const form = document.getElementById("budget-form") as HTMLFormElement;
+        const closeBtn = document.getElementById("close-budget-modal");
+
+        if (!modal || !form || !closeBtn) return;
+
+        (window as any).openBudgetModal = () => {
+            const budgets = getBudgets();
+            // Map keys to input names
+            const map: Record<string, string> = {
+                dining: "budget_dining",
+                shopping: "budget_shopping",
+                transportation: "budget_transport",
+                entertainment: "budget_entertainment",
+            };
+
+            Object.entries(map).forEach(([key, inputName]) => {
+                const input = form.querySelector(
+                    `input[name="${inputName}"]`,
+                ) as HTMLInputElement;
+                if (input && budgets[key] !== undefined) {
+                    input.value = (budgets[key] as number).toString();
+                }
+            });
+            modal.showModal();
+        };
+
+        closeBtn.addEventListener("click", () => {
+            modal.close();
+        });
+
+        modal.addEventListener("click", (e) => {
+            const rect = modal.getBoundingClientRect();
+            const isInDialog =
+                rect.top <= e.clientY &&
+                e.clientY <= rect.top + rect.height &&
+                rect.left <= e.clientX &&
+                e.clientX <= rect.left + rect.width;
+            if (!isInDialog) {
+                modal.close();
+            }
+        });
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const newBudgets: Record<string, number> = {
+                dining:
+                    parseFloat(formData.get("budget_dining") as string) || 0,
+                shopping:
+                    parseFloat(formData.get("budget_shopping") as string) || 0,
+                transportation:
+                    parseFloat(formData.get("budget_transport") as string) || 0,
+                entertainment:
+                    parseFloat(
+                        formData.get("budget_entertainment") as string,
+                    ) || 0,
+            };
+
+            saveBudgets(newBudgets);
+            modal.close();
+        });
+    }
+
+    document.addEventListener("astro:page-load", initBudgetModal);
+</script>
+
+<style>
+    :global(body:has(dialog[open])) {
+        overflow: hidden;
+    }
+</style>

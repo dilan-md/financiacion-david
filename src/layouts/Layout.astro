@@ -1,30 +1,80 @@
 ---
-import '../styles/global.css';
-import { ViewTransitions } from 'astro:transitions';
+import "../styles/global.css";
+import { ViewTransitions } from "astro:transitions";
 
 interface Props {
-	title?: string;
+    title?: string;
 }
 
 const { title = "Vibrant Modern Ledger Dashboard" } = Astro.props;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>{title}</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
-    <ViewTransitions />
-</head>
-<body class="bg-slate-light text-slate-dark font-sans min-h-screen flex flex-col antialiased selection:bg-indigo selection:text-white overflow-x-hidden">
-    <slot />
-</body>
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>{title}</title>
+        <link href="https://fonts.googleapis.com" rel="preconnect" />
+        <link
+            crossorigin=""
+            href="https://fonts.gstatic.com"
+            rel="preconnect"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+            rel="stylesheet"
+        />
+        <script is:inline>
+            // Apply theme to prevent FOUC
+            (function () {
+                function applyStoredTheme() {
+                    var theme =
+                        localStorage.getItem("theme") ||
+                        (window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches
+                            ? "dark"
+                            : "light");
+                    if (theme === "dark") {
+                        document.documentElement.classList.add("dark");
+                    } else {
+                        document.documentElement.classList.remove("dark");
+                    }
+                }
+                // Apply immediately on first load
+                applyStoredTheme();
+                // Re-apply after ViewTransitions swaps the page (critical for no flash)
+                document.addEventListener("astro:after-swap", applyStoredTheme);
+
+                // Event delegation: handle clicks on any .theme-toggle button
+                // Check if we already initialized to avoid duplicate listeners on soft loads
+                if (!window.__theme_initialized) {
+                    document.addEventListener("click", function (e) {
+                        var target = e.target;
+                        if (!target || !(target instanceof Element)) return;
+                        if (!target.closest(".theme-toggle")) return;
+
+                        var isDark =
+                            document.documentElement.classList.contains("dark");
+                        localStorage.setItem(
+                            "theme",
+                            isDark ? "light" : "dark",
+                        );
+                        applyStoredTheme();
+                    });
+                    window.__theme_initialized = true;
+                }
+            })();
+        </script>
+        <ViewTransitions />
+    </head>
+    <body
+        class="bg-slate-light text-slate-dark font-sans min-h-screen flex flex-col antialiased selection:bg-indigo selection:text-white overflow-x-hidden transition-colors duration-300"
+    >
+        <slot />
+    </body>
 </html>
