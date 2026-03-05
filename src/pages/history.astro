@@ -208,18 +208,27 @@ import TransactionModal from "../components/modals/TransactionModal.astro";
         formatCurrency,
         getBalanceOverview,
         parseLocalDate,
-        clearAllTransactions,
+        resetAllData,
+        isUserAdmin,
     } from "../utils/store";
 
     let currentFilter = "all";
     let searchQuery = "";
 
-    function renderHistory() {
+    async function renderHistory() {
+        const isAdmin = await isUserAdmin();
+        const clearBtn = document.getElementById("clear-history-btn");
+        if (clearBtn) {
+            clearBtn.style.display = isAdmin ? "flex" : "none";
+        }
         const container = document.getElementById("history-container");
         if (!container) return;
 
-        let transactions = getTransactions();
-        const overview = getBalanceOverview();
+        const [transactionsRaw, overview] = await Promise.all([
+            getTransactions(),
+            getBalanceOverview(),
+        ]);
+        let transactions = [...transactionsRaw];
 
         // Update Stats
         const spentStat = document.getElementById("total-spent-stat");
@@ -321,12 +330,38 @@ import TransactionModal from "../components/modals/TransactionModal.astro";
         };
 
         container.innerHTML = Object.entries(groups)
-            .map(
-                ([month, txs]) => `
-            <div>
-                <h3 class="text-3xl font-sans font-bold text-slate-dark mb-6 border-l-8 border-indigo pl-4">
-                    ${month}
-                </h3>
+            .map(([month, txs]) => {
+                let monthIncome = 0;
+                let monthExpense = 0;
+                txs.forEach((t) => {
+                    if (t.type === "income") monthIncome += t.amount;
+                    else monthExpense += t.amount;
+                });
+                const monthNet = monthIncome - monthExpense;
+
+                return `
+            <div class="mb-12">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 border-l-8 border-indigo pl-4 gap-4">
+                    <h3 class="text-3xl font-sans font-bold text-slate-dark dark:text-white">
+                        ${month}
+                    </h3>
+                    <div class="flex items-center gap-4 bg-white dark:bg-slate-800/80 backdrop-blur-sm p-2 px-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Income</span>
+                            <span class="font-bold text-sm text-indigo dark:text-indigo-400">${formatCurrency(monthIncome)}</span>
+                        </div>
+                        <div class="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Expense</span>
+                            <span class="font-bold text-sm text-orange dark:text-orange-400">${formatCurrency(monthExpense)}</span>
+                        </div>
+                        <div class="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Net</span>
+                            <span class="${monthNet >= 0 ? "text-indigo dark:text-indigo-400" : "text-orange dark:text-orange-400"} font-bold text-sm">${formatCurrency(monthNet)}</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="space-y-4">
                     ${txs
                         .map((t) => {
@@ -380,8 +415,8 @@ import TransactionModal from "../components/modals/TransactionModal.astro";
                         .join("")}
                 </div>
             </div>
-        `,
-            )
+        `;
+            })
             .join("");
     }
 
@@ -438,8 +473,8 @@ import TransactionModal from "../components/modals/TransactionModal.astro";
         renderHistory();
     }
 
-    function exportCSV() {
-        const transactions = getTransactions();
+    async function exportCSV() {
+        const transactions = await getTransactions();
         if (transactions.length === 0) {
             alert("No transactions to export.");
             return;
@@ -458,7 +493,7 @@ import TransactionModal from "../components/modals/TransactionModal.astro";
             return `"${date}","${t.type}","${category.replace("_", " ")}","${amount}","${note}"`;
         });
 
-        const overview = getBalanceOverview();
+        const overview = await getBalanceOverview();
         rows.push("");
         rows.push(`"Total Income",,,,"${overview.totalIncome}"`);
         rows.push(`"Total Expenses",,,,"${overview.totalExpense}"`);
@@ -480,18 +515,18 @@ import TransactionModal from "../components/modals/TransactionModal.astro";
 
     function initExport() {
         const btn = document.getElementById("export-report-btn");
-        btn?.addEventListener("click", exportCSV);
+        btn?.addEventListener("click", () => exportCSV());
     }
 
     function initClear() {
         const btn = document.getElementById("clear-all-btn");
-        btn?.addEventListener("click", () => {
+        btn?.addEventListener("click", async () => {
             if (
                 confirm(
-                    "Are you sure you want to clear ALL transaction history? This will also reset your savings progress.",
+                    "Are you sure you want to clear ALL your transaction history? This will also reset your savings progress.",
                 )
             ) {
-                clearAllTransactions();
+                await resetAllData();
                 renderHistory();
             }
         });

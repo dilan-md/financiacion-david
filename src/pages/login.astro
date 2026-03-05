@@ -1,0 +1,147 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Login - David's Ledger">
+    <main
+        class="min-h-screen flex items-center justify-center bg-slate-50 px-6 py-12"
+    >
+        <div class="w-full max-w-md animate-fade-in">
+            <div class="text-center mb-10">
+                <div
+                    class="inline-flex items-center justify-center w-20 h-20 bg-indigo text-white rounded-3xl shadow-tactile mb-6"
+                >
+                    <span class="material-symbols-outlined text-4xl"
+                        >wallet</span
+                    >
+                </div>
+                <h1
+                    class="text-4xl font-bold text-slate-dark tracking-tight mb-2"
+                >
+                    Welcome Back
+                </h1>
+                <p class="text-slate-500 font-medium">
+                    Please enter your details to sign in.
+                </p>
+            </div>
+
+            <div
+                class="bg-white p-8 rounded-3xl shadow-card border border-slate-100"
+            >
+                <form id="login-form" class="space-y-6">
+                    <div>
+                        <label
+                            for="email"
+                            class="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-2"
+                            >Email Address</label
+                        >
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="david@example.com"
+                            required
+                            class="w-full py-4 px-5 rounded-xl border-2 border-slate-100 focus:border-indigo focus:ring-0 text-slate-dark font-medium transition-all"
+                        />
+                    </div>
+
+                    <div>
+                        <label
+                            for="password"
+                            class="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-2"
+                            >Password</label
+                        >
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="••••••••"
+                            required
+                            class="w-full py-4 px-5 rounded-xl border-2 border-slate-100 focus:border-indigo focus:ring-0 text-slate-dark font-medium transition-all"
+                        />
+                    </div>
+
+                    <div
+                        id="login-error"
+                        class="hidden p-4 rounded-xl bg-red-50 text-red-600 text-sm font-medium border border-red-100"
+                    >
+                        Invalid email or password.
+                    </div>
+
+                    <button
+                        type="submit"
+                        id="login-btn"
+                        class="w-full py-4 bg-indigo text-white font-bold rounded-xl shadow-tactile hover:shadow-tactile-hover hover:translate-y-[1px] transition-all flex items-center justify-center gap-2 group"
+                    >
+                        Sign In
+                        <span
+                            class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
+                            >arrow_forward</span
+                        >
+                    </button>
+                </form>
+
+                <div class="mt-8 pt-8 border-t border-slate-50 text-center">
+                    <p class="text-slate-400 text-sm font-medium">
+                        Don't have an account?
+                    </p>
+                    <a
+                        href="/signup"
+                        class="text-indigo font-bold hover:underline mt-1 inline-block"
+                        >Create an account for free</a
+                    >
+                </div>
+            </div>
+
+            <p class="mt-8 text-center text-slate-400 text-sm font-medium">
+                Secure Access
+            </p>
+        </div>
+    </main>
+</Layout>
+
+<script>
+    import { supabase } from "../lib/supabase";
+
+    function initLogin() {
+        const form = document.getElementById("login-form") as HTMLFormElement;
+        const errorEl = document.getElementById("login-error");
+        const submitBtn = document.getElementById(
+            "login-btn",
+        ) as HTMLButtonElement;
+
+        if (!form || !submitBtn) return;
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML =
+                '<span class="animate-spin material-symbols-outlined">progress_activity</span> Signing in...';
+            if (errorEl) errorEl.classList.add("hidden");
+
+            const formData = new FormData(form);
+            const email = formData.get("email") as string;
+            const password = formData.get("password") as string;
+
+            const { error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) {
+                if (errorEl) {
+                    errorEl.textContent = error.message;
+                    errorEl.classList.remove("hidden");
+                }
+                submitBtn.disabled = false;
+                submitBtn.innerHTML =
+                    'Sign In <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>';
+            } else {
+                window.location.href = "/";
+            }
+        });
+    }
+
+    document.addEventListener("astro:page-load", initLogin);
+</script>

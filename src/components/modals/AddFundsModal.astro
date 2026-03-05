@@ -69,7 +69,11 @@
 </dialog>
 
 <script>
-    import { updateGoalProgress, getGoals } from "../../utils/store";
+    import {
+        updateGoalProgress,
+        getGoals,
+        isUserAdmin,
+    } from "../../utils/store";
 
     function initFundsModal() {
         const modal = document.getElementById(
@@ -84,9 +88,15 @@
 
         if (!modal || !form || !closeBtn) return;
 
-        (window as any).openAddFundsModal = (goalId: string) => {
-            const goals = getGoals();
-            const goal = goals.find((g) => g.id === goalId);
+        (window as any).openAddFundsModal = async (goalId: string) => {
+            const isAdmin = await isUserAdmin();
+            const submitBtn = form.querySelector(
+                'button[type="submit"]',
+            ) as HTMLButtonElement;
+            if (submitBtn) submitBtn.style.display = isAdmin ? "block" : "none";
+
+            const goals = await getGoals();
+            const goal = goals.find((g: any) => g.id === goalId);
             if (!goal) return;
 
             if (goalNameEl) goalNameEl.textContent = `Saving for: ${goal.name}`;
@@ -114,16 +124,37 @@
             }
         });
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const formData = new FormData(form);
-            const goalId = formData.get("goalId") as string;
-            const amount = parseFloat(formData.get("amount") as string);
+            const submitBtn = form.querySelector(
+                'button[type="submit"]',
+            ) as HTMLButtonElement;
+            const originalText = submitBtn?.textContent;
 
-            if (goalId && amount > 0) {
-                updateGoalProgress(goalId, amount);
-                modal.close();
-                form.reset();
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML =
+                    '<span class="animate-spin material-symbols-outlined">progress_activity</span> Depositing...';
+            }
+
+            try {
+                const formData = new FormData(form);
+                const goalId = formData.get("goalId") as string;
+                const amount = parseFloat(formData.get("amount") as string);
+
+                if (goalId && amount > 0) {
+                    await updateGoalProgress(goalId, amount);
+                    modal.close();
+                    form.reset();
+                }
+            } catch (error) {
+                console.error("Error adding funds:", error);
+                alert("Error adding funds. Please try again.");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText || "Confirm Deposit";
+                }
             }
         });
     }

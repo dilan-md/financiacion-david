@@ -73,10 +73,12 @@
         formatCurrency,
     } from "../utils/store";
 
-    function updateBalanceUI() {
-        const balanceData = getBalanceOverview();
-        const savingsTotal = getSavingsTotal();
-        const growthRate = getMonthGrowthRate();
+    async function updateBalanceUI() {
+        const [balanceData, savingsTotal, growthRate] = await Promise.all([
+            getBalanceOverview(),
+            getSavingsTotal(),
+            getMonthGrowthRate(),
+        ]);
 
         const balanceEl = document.getElementById("balance-amount");
         const incomeEl = document.getElementById("income-amount");
@@ -120,11 +122,23 @@
         }
 
         if (growthContainer && growthText && growthIcon) {
-            const isPositive = growthRate >= 0;
-            growthText.textContent = `${isPositive ? "+" : ""}${growthRate.toFixed(1)}% this month`;
-            growthIcon.textContent = isPositive
-                ? "trending_up"
-                : "trending_down";
+            const { rate, isNewAccount, netThisMonth } = growthRate;
+            const isPositive = rate >= 0;
+
+            if (isNewAccount) {
+                growthText.textContent =
+                    netThisMonth !== 0
+                        ? `${isPositive ? "+" : ""}${formatCurrency(netThisMonth)} this month`
+                        : "Starting your journey";
+                growthIcon.textContent =
+                    netThisMonth >= 0 ? "stars" : "trending_down";
+            } else {
+                growthText.textContent = `${isPositive ? "+" : ""}${rate.toFixed(1)}% this month`;
+                growthIcon.textContent = isPositive
+                    ? "trending_up"
+                    : "trending_down";
+            }
+
             growthContainer.classList.remove("opacity-0");
 
             if (isPositive) {

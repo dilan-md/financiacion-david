@@ -179,6 +179,7 @@
         getGoals,
         updateGoal,
         deleteGoal,
+        isUserAdmin,
     } from "../../utils/store";
 
     function initGoalModal() {
@@ -212,10 +213,20 @@
             targetDateInput.valueAsDate = d;
         }
 
-        (window as any).openGoalModal = (goalId?: string) => {
+        (window as any).openGoalModal = async (goalId?: string) => {
+            const isAdmin = await isUserAdmin();
+            if (submitBtn)
+                (submitBtn as HTMLElement).style.display = isAdmin
+                    ? "block"
+                    : "none";
+            if (deleteBtn)
+                (deleteBtn as HTMLElement).style.display = isAdmin
+                    ? "block"
+                    : "none";
+
             if (goalId) {
-                const goals = getGoals();
-                const goal = goals.find((g) => g.id === goalId);
+                const goals = await getGoals();
+                const goal = goals.find((g: any) => g.id === goalId);
                 if (goal) {
                     if (goalIdInput) goalIdInput.value = goal.id;
                     if (goalNameInput) goalNameInput.value = goal.name;
@@ -230,7 +241,7 @@
 
                     if (submitBtn) submitBtn.textContent = "Save Changes";
                     if (titleEl) titleEl.textContent = "Edit Savings Goal";
-                    deleteBtn?.classList.remove("hidden");
+                    if (isAdmin) deleteBtn?.classList.remove("hidden");
                 }
             } else {
                 form.reset();
@@ -268,40 +279,59 @@
             }
         });
 
-        deleteBtn?.addEventListener("click", () => {
+        deleteBtn?.addEventListener("click", async () => {
             const id = goalIdInput.value;
             if (id && confirm("Are you sure you want to delete this goal?")) {
-                deleteGoal(id);
+                await deleteGoal(id);
                 modal.close();
                 form.reset();
             }
         });
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const formData = new FormData(form);
-            const id = goalIdInput.value;
 
-            const goalData = {
-                name: formData.get("name") as string,
-                amount: parseFloat(formData.get("amount") as string),
-                date: formData.get("date") as string,
-                icon:
-                    (
-                        form.querySelector(
-                            'input[name="icon"]:checked',
-                        ) as HTMLInputElement
-                    )?.value || "savings",
-            };
+            const btn = submitBtn as HTMLButtonElement;
+            if (btn) {
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.innerHTML =
+                    '<span class="animate-spin material-symbols-outlined">progress_activity</span> Saving...';
 
-            if (id) {
-                updateGoal(id, goalData);
-            } else {
-                addGoal(goalData);
+                try {
+                    const formData = new FormData(form);
+                    const id = goalIdInput.value;
+
+                    const goalData = {
+                        name: formData.get("name") as string,
+                        amount: parseFloat(formData.get("amount") as string),
+                        date: formData.get("date") as string,
+                        icon:
+                            (
+                                form.querySelector(
+                                    'input[name="icon"]:checked',
+                                ) as HTMLInputElement
+                            )?.value || "savings",
+                    };
+
+                    if (id) {
+                        await updateGoal(id, goalData);
+                    } else {
+                        await addGoal(goalData);
+                    }
+
+                    modal.close();
+                    form.reset();
+                } catch (error) {
+                    console.error("Error saving goal:", error);
+                    alert("Error saving goal. Please try again.");
+                } finally {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = originalText;
+                    }
+                }
             }
-
-            modal.close();
-            form.reset();
         });
     }
 

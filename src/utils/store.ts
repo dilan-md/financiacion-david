@@ -1,3 +1,5 @@
+import { supabase } from '../lib/supabase';
+
 export interface Transaction {
     id: string;
     type: 'expense' | 'income';
@@ -7,153 +9,9 @@ export interface Transaction {
     note: string;
     timestamp: number;
     goalId?: string;
+    user_id?: string;
 }
 
-const TRANSACTIONS_KEY = 'vibrant_transactions';
-
-export const getTransactions = (): Transaction[] => {
-    if (typeof window === 'undefined') return [];
-
-    const data = localStorage.getItem(TRANSACTIONS_KEY);
-    if (!data) return [];
-
-    try {
-        const parsed = JSON.parse(data);
-        console.log(`[Store] Loaded ${parsed.length} transactions from localStorage`);
-        return parsed;
-    } catch (e) {
-        console.error("Error parsing transactions from local storage", e);
-        return [];
-    }
-};
-
-export const addTransaction = (transaction: Omit<Transaction, 'id' | 'timestamp'>) => {
-    if (typeof window === 'undefined') return;
-
-    const transactions = getTransactions();
-    const newTransaction: Transaction = {
-        ...transaction,
-        id: crypto.randomUUID(),
-        timestamp: Date.now()
-    };
-
-    transactions.push(newTransaction);
-    // Sort descending by date, then timestamp
-    transactions.sort((a, b) => {
-        if (a.date !== b.date) {
-            return new Date(b.date).getTime() - new Date(a.date).getTime();
-        }
-        return b.timestamp - a.timestamp;
-    });
-
-    localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
-    console.log(`[Store] Saved transaction. Total: ${transactions.length}`);
-
-    // Dispatch an event so components can update reactively
-    window.dispatchEvent(new CustomEvent('transactions-updated'));
-};
-
-export const updateTransaction = (id: string, updatedData: Partial<Transaction>) => {
-    if (typeof window === 'undefined') return;
-
-    const transactions = getTransactions();
-    const index = transactions.findIndex(t => t.id === id);
-    if (index === -1) return;
-
-    const oldTransaction = transactions[index];
-    const newTransaction = { ...oldTransaction, ...updatedData };
-    transactions[index] = newTransaction;
-
-    // Handle Goal Sync
-    const goals = getGoals();
-    let goalsChanged = false;
-
-    // Case 1: Was savings, no longer savings OR amount changed
-    if (oldTransaction.category === 'savings' && oldTransaction.goalId) {
-        const goalIndex = goals.findIndex(g => g.id === oldTransaction.goalId);
-        if (goalIndex !== -1) {
-            if (newTransaction.category !== 'savings') {
-                // No longer savings, remove old amount
-                goals[goalIndex].current -= oldTransaction.amount;
-                // Important: also remove the goalId from the transaction since it's no longer linked
-                newTransaction.goalId = undefined;
-            } else {
-                // Still savings, just adjust amount
-                goals[goalIndex].current = goals[goalIndex].current - oldTransaction.amount + newTransaction.amount;
-            }
-            goalsChanged = true;
-        }
-    }
-    // Case 2: Was NOT savings, but now it IS savings (This is rare from UI but good for robustness)
-    // Note: This would requires a goalId we don't have, so we mostly handle Case 1.
-
-    if (goalsChanged) {
-        localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
-        window.dispatchEvent(new CustomEvent('goals-updated'));
-    }
-
-    // Re-sort
-    transactions.sort((a, b) => {
-        if (a.date !== b.date) {
-            return new Date(b.date).getTime() - new Date(a.date).getTime();
-        }
-        return b.timestamp - a.timestamp;
-    });
-
-    localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
-    window.dispatchEvent(new CustomEvent('transactions-updated'));
-};
-
-export const deleteTransaction = (id: string) => {
-    if (typeof window === 'undefined') return;
-
-    const transactions = getTransactions();
-    const transactionToDelete = transactions.find(t => t.id === id);
-
-    if (transactionToDelete && transactionToDelete.category === 'savings' && transactionToDelete.goalId) {
-        const goals = getGoals();
-        const goalIndex = goals.findIndex(g => g.id === transactionToDelete.goalId);
-        if (goalIndex !== -1) {
-            goals[goalIndex].current -= transactionToDelete.amount;
-            localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
-            window.dispatchEvent(new CustomEvent('goals-updated'));
-        }
-    }
-
-    const filtered = transactions.filter(t => t.id !== id);
-
-    localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(filtered));
-    window.dispatchEvent(new CustomEvent('transactions-updated'));
-};
-
-export function resetGoalProgress() {
-    if (typeof window === 'undefined') return;
-    const goals = getGoals();
-    goals.forEach(g => (g.current = 0));
-    localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
-    window.dispatchEvent(new CustomEvent('goals-updated'));
-}
-
-export function clearAllTransactions() {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem(TRANSACTIONS_KEY);
-    // When clearing all transactions, we also reset goal progress to maintain flow
-    resetGoalProgress();
-    window.dispatchEvent(new CustomEvent('transactions-updated'));
-}
-
-export function resetAllData() {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem(TRANSACTIONS_KEY);
-    localStorage.removeItem(GOALS_KEY);
-    localStorage.removeItem(BUDGETS_KEY);
-    window.dispatchEvent(new CustomEvent('transactions-updated'));
-    window.dispatchEvent(new CustomEvent('goals-updated'));
-    window.dispatchEvent(new CustomEvent('budgets-updated'));
-}
-
-// Goals
-const GOALS_KEY = 'vibrant_ledger_goals';
 export interface Goal {
     id: string;
     name: string;
@@ -161,98 +19,230 @@ export interface Goal {
     date: string;
     icon: string;
     current: number;
+    user_id?: string;
 }
 
-export function getGoals(): Goal[] {
-    if (typeof window === 'undefined') return [];
-    const data = localStorage.getItem(GOALS_KEY);
-    return data ? JSON.parse(data) : [];
+export type Budgets = Record<string, number>;
+
+// --- Auth Functions ---
+
+export async function isUserAdmin(): Promise<boolean> {
+    const user = await getCurrentUser();
+    if (!user) return false;
+    // For now we check against a list of admin emails or a specific one
+    // In a real app, this would be a role in the DB
+    const adminEmails = ['florezramirezronaldo@gmail.com', 'david@example.com', 'dilan@example.com'];
+    return adminEmails.includes(user.email || '');
 }
 
-export function addGoal(goal: Omit<Goal, 'id' | 'current'>) {
-    if (typeof window === 'undefined') return;
-    const goals = getGoals();
-    const newGoal = {
-        ...goal,
-        id: crypto.randomUUID(),
-        current: 0
-    };
-    goals.push(newGoal);
-    localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+export const getCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+};
+
+export const signOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/login';
+};
+
+// --- Transaction Functions ---
+
+export const getTransactions = async (): Promise<Transaction[]> => {
+    const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('date', { ascending: false })
+        .order('timestamp', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching transactions:', error);
+        return [];
+    }
+    return data || [];
+};
+
+export const addTransaction = async (transaction: Omit<Transaction, 'id' | 'timestamp'>) => {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const { error } = await supabase
+        .from('transactions')
+        .insert([{
+            ...transaction,
+            user_id: user.id,
+            timestamp: Date.now()
+        }]);
+
+    if (error) console.error('Error adding transaction:', error);
+    window.dispatchEvent(new CustomEvent('transactions-updated'));
+};
+
+export const updateTransaction = async (id: string, updatedData: Partial<Transaction>) => {
+    const { error } = await supabase
+        .from('transactions')
+        .update(updatedData)
+        .eq('id', id);
+
+    if (error) console.error('Error updating transaction:', error);
+
+    // We handle goal sync differently in Supabase if needed, 
+    // but for now let's just trigger the event.
+    window.dispatchEvent(new CustomEvent('transactions-updated'));
     window.dispatchEvent(new CustomEvent('goals-updated'));
-}
+};
 
-export function updateGoal(id: string, updatedData: Partial<Goal>) {
-    if (typeof window === 'undefined') return;
-    const goals = getGoals();
-    const index = goals.findIndex(g => g.id === id);
-    if (index === -1) return;
+export const deleteTransaction = async (id: string) => {
+    const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id);
 
-    goals[index] = { ...goals[index], ...updatedData };
-    localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+    if (error) console.error('Error deleting transaction:', error);
+    window.dispatchEvent(new CustomEvent('transactions-updated'));
     window.dispatchEvent(new CustomEvent('goals-updated'));
-}
+};
 
-export function deleteGoal(id: string) {
-    if (typeof window === 'undefined') return;
-    const goals = getGoals();
-    const filtered = goals.filter(g => g.id !== id);
-    localStorage.setItem(GOALS_KEY, JSON.stringify(filtered));
+// --- Goal Functions ---
+
+export const getGoals = async (): Promise<Goal[]> => {
+    const { data, error } = await supabase
+        .from('goals')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching goals:', error);
+        return [];
+    }
+    return data || [];
+};
+
+export const addGoal = async (goal: Omit<Goal, 'id' | 'current'>) => {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const { error } = await supabase
+        .from('goals')
+        .insert([{
+            ...goal,
+            user_id: user.id,
+            current: 0
+        }]);
+
+    if (error) console.error('Error adding goal:', error);
     window.dispatchEvent(new CustomEvent('goals-updated'));
-}
+};
 
-export function getSavingsTotal(): number {
-    const goals = getGoals();
-    return goals.reduce((sum, goal) => sum + goal.current, 0);
-}
+export const updateGoal = async (id: string, updatedData: Partial<Goal>) => {
+    const { error } = await supabase
+        .from('goals')
+        .update(updatedData)
+        .eq('id', id);
 
-export function updateGoalProgress(goalId: string, amount: number) {
-    if (typeof window === 'undefined') return;
+    if (error) console.error('Error updating goal:', error);
+    window.dispatchEvent(new CustomEvent('goals-updated'));
+};
 
-    const goals = getGoals();
-    const goalIndex = goals.findIndex(g => g.id === goalId);
+export const deleteGoal = async (id: string) => {
+    const { error } = await supabase
+        .from('goals')
+        .delete()
+        .eq('id', id);
 
-    if (goalIndex === -1) return;
+    if (error) console.error('Error deleting goal:', error);
+    window.dispatchEvent(new CustomEvent('goals-updated'));
+};
 
-    goals[goalIndex].current += amount;
-    localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+export const updateGoalProgress = async (goalId: string, amount: number) => {
+    const goals = await getGoals();
+    const goal = goals.find(g => g.id === goalId);
+    if (!goal) return;
+
+    const newCurrent = goal.current + amount;
+
+    const { error } = await supabase
+        .from('goals')
+        .update({ current: newCurrent })
+        .eq('id', goalId);
+
+    if (error) {
+        console.error('Error updating goal progress:', error);
+        return;
+    }
 
     // Create a corresponding transaction
-    addTransaction({
+    await addTransaction({
         type: 'expense',
         amount: amount,
         category: 'savings',
         goalId: goalId,
-        note: `Funded goal: ${goals[goalIndex].name}`,
+        note: `Funded goal: ${goal.name}`,
         date: new Date().toISOString().split('T')[0]
     });
 
     window.dispatchEvent(new CustomEvent('goals-updated'));
-}
+};
 
-// Budgets
-const BUDGETS_KEY = 'vibrant_ledger_budgets';
-export type Budgets = Record<string, number>;
+export const getSavingsTotal = async (): Promise<number> => {
+    const goals = await getGoals();
+    return goals.reduce((sum, goal) => sum + goal.current, 0);
+};
 
-export function getBudgets(): Budgets {
-    if (typeof window === 'undefined') return {};
-    const data = localStorage.getItem(BUDGETS_KEY);
-    return data ? JSON.parse(data) : {
-        'dining': 800,
-        'shopping': 900,
-        'transportation': 300,
-        'entertainment': 200
-    };
-}
+// --- Budget Functions ---
 
-export function saveBudgets(budgets: Budgets) {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(BUDGETS_KEY, JSON.stringify(budgets));
+export const getBudgets = async (): Promise<Budgets> => {
+    const { data, error } = await supabase
+        .from('budgets')
+        .select('category, limit');
+
+    if (error) {
+        console.error('Error fetching budgets:', error);
+        return {
+            'dining': 800,
+            'shopping': 900,
+            'transportation': 300,
+            'entertainment': 200
+        };
+    }
+
+    const budgets: Budgets = {};
+    data?.forEach(b => {
+        budgets[b.category] = b.limit;
+    });
+
+    if (Object.keys(budgets).length === 0) {
+        return {
+            'dining': 800,
+            'shopping': 900,
+            'transportation': 300,
+            'entertainment': 200
+        };
+    }
+
+    return budgets;
+};
+
+export const saveBudgets = async (budgets: Budgets) => {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    for (const [category, limit] of Object.entries(budgets)) {
+        await supabase
+            .from('budgets')
+            .upsert({
+                user_id: user.id,
+                category,
+                limit
+            }, { onConflict: 'user_id,category' });
+    }
+
     window.dispatchEvent(new CustomEvent('budgets-updated'));
-}
+};
 
-export const getBalanceOverview = () => {
-    const transactions = getTransactions();
+// --- Analysis Functions ---
+
+export const getBalanceOverview = async () => {
+    const transactions = await getTransactions();
 
     let totalIncome = 0;
     let totalExpense = 0;
@@ -272,8 +262,8 @@ export const getBalanceOverview = () => {
     };
 };
 
-export const getMonthGrowthRate = () => {
-    const transactions = getTransactions();
+export const getMonthGrowthRate = async () => {
+    const transactions = await getTransactions();
     const now = new Date();
     const thisMonth = now.getMonth();
     const thisYear = now.getFullYear();
@@ -292,18 +282,43 @@ export const getMonthGrowthRate = () => {
         }
     });
 
-    if (balanceBeforeThisMonth === 0) {
-        // If no previous balance, show growth relative to income this month
-        // or just return 0 if there's no data
-        return netThisMonth > 0 ? 100 : 0;
+    const isNewAccount = balanceBeforeThisMonth === 0;
+
+    if (isNewAccount) {
+        // For new accounts, the "growth" isn't meaningful relative to 0
+        // We return the net amount itself as a pseudo-rate for UI display
+        return {
+            rate: netThisMonth > 0 ? 100 : 0,
+            isNewAccount: true,
+            netThisMonth
+        };
     }
 
-    return (netThisMonth / Math.abs(balanceBeforeThisMonth)) * 100;
+    return {
+        rate: (netThisMonth / Math.abs(balanceBeforeThisMonth)) * 100,
+        isNewAccount: false,
+        netThisMonth
+    };
 };
 
-// --- Formatters & Helpers ---
+// --- Reset Functions ---
+
+export const resetAllData = async () => {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    await supabase.from('transactions').delete().eq('user_id', user.id);
+    await supabase.from('goals').delete().eq('user_id', user.id);
+    await supabase.from('budgets').delete().eq('user_id', user.id);
+
+    window.dispatchEvent(new CustomEvent('transactions-updated'));
+    window.dispatchEvent(new CustomEvent('goals-updated'));
+    window.dispatchEvent(new CustomEvent('budgets-updated'));
+};
+
+// --- Helpers ---
+
 export const parseLocalDate = (dateStr: string) => {
-    // Split YYYY-MM-DD and create date in local time
     const [year, month, day] = dateStr.split('-').map(Number);
     return new Date(year, month - 1, day);
 };

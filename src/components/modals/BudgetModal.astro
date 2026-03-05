@@ -196,7 +196,7 @@
 </dialog>
 
 <script>
-    import { getBudgets, saveBudgets } from "../../utils/store";
+    import { getBudgets, saveBudgets, isUserAdmin } from "../../utils/store";
 
     function initBudgetModal() {
         const modal = document.getElementById(
@@ -207,8 +207,14 @@
 
         if (!modal || !form || !closeBtn) return;
 
-        (window as any).openBudgetModal = () => {
-            const budgets = getBudgets();
+        (window as any).openBudgetModal = async () => {
+            const isAdmin = await isUserAdmin();
+            const submitBtn = form.querySelector(
+                'button[type="submit"]',
+            ) as HTMLButtonElement;
+            if (submitBtn) submitBtn.style.display = isAdmin ? "block" : "none";
+
+            const budgets = await getBudgets();
             // Map keys to input names
             const map: Record<string, string> = {
                 dining: "budget_dining",
@@ -228,40 +234,55 @@
             modal.showModal();
         };
 
-        closeBtn.addEventListener("click", () => {
-            modal.close();
-        });
-
-        modal.addEventListener("click", (e) => {
-            const rect = modal.getBoundingClientRect();
-            const isInDialog =
-                rect.top <= e.clientY &&
-                e.clientY <= rect.top + rect.height &&
-                rect.left <= e.clientX &&
-                e.clientX <= rect.left + rect.width;
-            if (!isInDialog) {
+        if (closeBtn) {
+            closeBtn.addEventListener("click", () => {
                 modal.close();
-            }
-        });
+            });
+        }
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const formData = new FormData(form);
-            const newBudgets: Record<string, number> = {
-                dining:
-                    parseFloat(formData.get("budget_dining") as string) || 0,
-                shopping:
-                    parseFloat(formData.get("budget_shopping") as string) || 0,
-                transportation:
-                    parseFloat(formData.get("budget_transport") as string) || 0,
-                entertainment:
-                    parseFloat(
-                        formData.get("budget_entertainment") as string,
-                    ) || 0,
-            };
+            const submitBtn = form.querySelector(
+                'button[type="submit"]',
+            ) as HTMLButtonElement;
+            const originalText = submitBtn?.textContent;
 
-            saveBudgets(newBudgets);
-            modal.close();
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML =
+                    '<span class="animate-spin material-symbols-outlined">progress_activity</span> Saving...';
+            }
+
+            try {
+                const formData = new FormData(form);
+                const newBudgets: Record<string, number> = {
+                    dining:
+                        parseFloat(formData.get("budget_dining") as string) ||
+                        0,
+                    shopping:
+                        parseFloat(formData.get("budget_shopping") as string) ||
+                        0,
+                    transportation:
+                        parseFloat(
+                            formData.get("budget_transport") as string,
+                        ) || 0,
+                    entertainment:
+                        parseFloat(
+                            formData.get("budget_entertainment") as string,
+                        ) || 0,
+                };
+
+                await saveBudgets(newBudgets);
+                modal.close();
+            } catch (error) {
+                console.error("Error saving budgets:", error);
+                alert("Error saving budgets. Please try again.");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText || "Save Budgets";
+                }
+            }
         });
     }
 

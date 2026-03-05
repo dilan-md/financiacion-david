@@ -70,6 +70,29 @@ const { title = "Vibrant Modern Ledger Dashboard" } = Astro.props;
                 }
             })();
         </script>
+        <script>
+            import { supabase } from "../lib/supabase";
+
+            async function checkAuth() {
+                const {
+                    data: { session },
+                } = await supabase.auth.getSession();
+                const path = window.location.pathname;
+
+                if (!session && path !== "/login" && path !== "/signup") {
+                    window.location.href = "/login";
+                } else if (
+                    session &&
+                    (path === "/login" || path === "/signup")
+                ) {
+                    window.location.href = "/";
+                }
+            }
+
+            // Run on load and after view transitions
+            checkAuth();
+            document.addEventListener("astro:after-swap", checkAuth);
+        </script>
         <ViewTransitions />
     </head>
     <body

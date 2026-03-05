@@ -146,9 +146,21 @@ import TransactionModal from "../components/modals/TransactionModal.astro";
         getBudgets,
         formatCurrency,
         parseLocalDate,
+        isUserAdmin,
     } from "../utils/store";
 
-    function renderDashboard() {
+    async function renderDashboard() {
+        const isAdmin = await isUserAdmin();
+        const actionButtons = document.querySelectorAll(
+            ".flex.flex-col.gap-4.justify-center button",
+        );
+
+        if (!isAdmin) {
+            actionButtons.forEach(
+                (btn) => ((btn as HTMLElement).style.display = "none"),
+            );
+        }
+
         const activityContainer = document.getElementById(
             "recent-activity-list",
         );
@@ -157,9 +169,12 @@ import TransactionModal from "../components/modals/TransactionModal.astro";
             "dashboard-category-cards",
         );
 
-        const transactions = getTransactions();
-        const goals = getGoals();
-        const budgets = getBudgets();
+        // Fetch data asynchronously
+        const [transactions, goals, budgets] = await Promise.all([
+            getTransactions(),
+            getGoals(),
+            getBudgets(),
+        ]);
 
         // 1. Render Recent Activity
         if (activityContainer) {

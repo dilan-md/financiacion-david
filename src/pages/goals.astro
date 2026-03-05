@@ -92,15 +92,17 @@ import AddFundsModal from "../components/modals/AddFundsModal.astro";
         parseLocalDate,
     } from "../utils/store";
 
-    function renderGoalsAndBudgets() {
+    async function renderGoalsAndBudgets() {
         const goalsContainer = document.getElementById("goals-container");
         const budgetsContainer = document.getElementById("budgets-container");
 
         if (!goalsContainer || !budgetsContainer) return;
 
-        const goals = getGoals();
-        const budgets = getBudgets();
-        const transactions = getTransactions();
+        const [goals, budgets, transactions] = await Promise.all([
+            getGoals(),
+            getBudgets(),
+            getTransactions(),
+        ]);
 
         // Calculate actual spending per category for budgets
         const spendingByCategory: Record<string, number> = {};

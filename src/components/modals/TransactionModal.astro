@@ -161,6 +161,7 @@
         getTransactions,
         updateTransaction,
         deleteTransaction,
+        isUserAdmin,
     } from "../../utils/store";
 
     document.addEventListener("astro:page-load", () => {
@@ -339,43 +340,75 @@
         });
 
         // Handle form submission
-        form?.addEventListener("submit", (e) => {
+        form?.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            const id = idInput.value;
 
-            const transactionData = {
-                type: (data.type as "expense" | "income") || currentType,
-                amount: parseFloat(data.amount as string) || 0,
-                category: (data.category as string) || "other",
-                date: data.date as string,
-                note: data.note as string,
-            };
+            const btn = submitBtn as HTMLButtonElement;
+            if (btn) {
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.innerHTML =
+                    '<span class="animate-spin material-symbols-outlined">progress_activity</span> Saving...';
 
-            if (id) {
-                updateTransaction(id, transactionData);
-            } else {
-                addTransaction(transactionData);
+                try {
+                    const formData = new FormData(form);
+                    const data = Object.fromEntries(formData.entries());
+                    const id = idInput.value;
+
+                    const transactionData = {
+                        type:
+                            (data.type as "expense" | "income") || currentType,
+                        amount: parseFloat(data.amount as string) || 0,
+                        category: (data.category as string) || "other",
+                        date: data.date as string,
+                        note: data.note as string,
+                    };
+
+                    if (id) {
+                        await updateTransaction(id, transactionData);
+                    } else {
+                        await addTransaction(transactionData);
+                    }
+
+                    modal.close();
+                    form.reset();
+                    idInput.value = "";
+                    setType("expense");
+                    if (dateInput) dateInput.valueAsDate = new Date();
+                } catch (error) {
+                    console.error("Error saving transaction:", error);
+                    alert("Error saving transaction. Please try again.");
+                } finally {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = originalText;
+                    }
+                }
             }
-
-            modal.close();
-            form.reset();
-            idInput.value = "";
-            setType("expense");
-            if (dateInput) dateInput.valueAsDate = new Date();
         });
 
         // Expose open method globally to be called from other components
-        (window as any).openTransactionModal = (
+        (window as any).openTransactionModal = async (
             typeOrId: "expense" | "income" | string = "expense",
         ) => {
+            const isAdmin = await isUserAdmin();
+            if (submitBtn)
+                (submitBtn as HTMLElement).style.display = isAdmin
+                    ? "block"
+                    : "none";
+            if (deleteBtn)
+                (deleteBtn as HTMLElement).style.display = isAdmin
+                    ? "block"
+                    : "none";
+
             form.reset();
 
             if (typeOrId !== "expense" && typeOrId !== "income") {
                 // It's an ID for editing
-                const transactions = getTransactions();
-                const t = transactions.find((item) => item.id === typeOrId);
+                const transactions = await getTransactions();
+                const t = transactions.find(
+                    (item: any) => item.id === typeOrId,
+                );
                 if (t) {
                     idInput.value = t.id;
                     setType(t.type);
@@ -387,7 +420,7 @@
             } else {
                 // It's a new transaction type
                 idInput.value = "";
-                setType(typeOrId);
+                setType(typeOrId as "expense" | "income");
                 if (dateInput) dateInput.valueAsDate = new Date();
             }
 

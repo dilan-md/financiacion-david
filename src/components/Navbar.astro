@@ -53,65 +53,114 @@ import ThemeToggle from "./ThemeToggle.astro";
         <div class="hidden md:flex items-center gap-4">
             <ThemeToggle />
             <div
+                id="user-profile"
                 class="bg-slate-100 rounded-full p-1 pr-4 flex items-center gap-3 border border-slate-200"
             >
-                <img
-                    alt="User"
-                    class="w-8 h-8 rounded-full object-cover border-2 border-white"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA95F-Jn7rj7RaszPbcQNIva-1w7s9xhXoia9MC5kswawawrH4zKRiCjTz_81qJ9hyAPA5C-6ZwRnrGMUYektWeirFee6L-mEtQ5PcDDA0pqU95Zm88Wmpux6DIarB4-b_d4B9cgp5B-tMo6-4euo1WaZdrB6BFCrH1F_RyWI83YTTSizAk-WX9rZprkffefxG5NbyK6dQiXmiMGHpuBGh9_IWjQaYLHNFLRm5e3O5FAdpWGaigcb5JLjH9Ihxb6f5utdB7quGJiUI"
-                />
-                <span class="font-bold text-sm text-slate-dark">David G.</span>
+                <div
+                    class="w-8 h-8 rounded-full bg-indigo text-white flex items-center justify-center font-bold text-xs border-2 border-white"
+                >
+                    U
+                </div>
+                <div class="flex flex-col">
+                    <span
+                        id="user-display-email"
+                        class="font-bold text-xs text-slate-dark leading-none"
+                    >
+                        ...
+                    </span>
+                    <span
+                        id="user-role-badge"
+                        class="text-[10px] font-bold text-slate-400 uppercase tracking-tight"
+                    >
+                        ...
+                    </span>
+                </div>
+                <button
+                    id="logout-btn"
+                    title="Sign Out"
+                    class="ml-2 text-slate-300 hover:text-indigo transition-colors"
+                >
+                    <span class="material-symbols-outlined text-sm">logout</span
+                    >
+                </button>
                 <button
                     id="reset-app-btn"
                     title="Reset All Data"
-                    class="ml-2 text-slate-300 hover:text-red-500 transition-colors"
+                    class="ml-1 text-slate-300 hover:text-red-500 transition-colors hidden"
                 >
                     <span class="material-symbols-outlined text-sm"
                         >restart_alt</span
                     >
                 </button>
             </div>
-        </div>
+            <script>
+                import {
+                    resetAllData,
+                    getCurrentUser,
+                    signOut,
+                    isUserAdmin,
+                } from "../utils/store";
 
-        <!-- Mobile Nav -->
-        <div
-            class="md:hidden flex gap-6 mt-4 overflow-x-auto pb-2 scrollbar-hide"
-        >
-            <a
-                href="/"
-                class={`nav-link whitespace-nowrap font-sans text-sm font-bold pb-1 border-b-2 transition-colors ${currentPath === "/" ? "text-indigo border-indigo" : "text-slate-400 hover:text-indigo border-transparent"}`}
-                >Dashboard</a
-            >
-            <a
-                href="/history"
-                class={`nav-link whitespace-nowrap font-sans text-sm font-bold pb-1 border-b-2 transition-colors ${currentPath === "/history" ? "text-indigo border-indigo" : "text-slate-400 hover:text-indigo border-transparent"}`}
-                >History</a
-            >
-            <a
-                href="/goals"
-                class={`nav-link whitespace-nowrap font-sans text-sm font-bold pb-1 border-b-2 transition-colors ${currentPath === "/goals" ? "text-indigo border-indigo" : "text-slate-400 hover:text-indigo border-transparent"}`}
-                >Goals &amp; Budgets</a
-            >
+                async function initNavbar() {
+                    const user = await getCurrentUser();
+                    const isAdmin = await isUserAdmin();
+                    const userEmailEl =
+                        document.getElementById("user-display-email");
+                    const userRoleEl =
+                        document.getElementById("user-role-badge");
+                    const userProfileEl =
+                        document.getElementById("user-profile");
+                    const resetBtn = document.getElementById("reset-app-btn");
+                    const logoutBtn = document.getElementById("logout-btn");
+
+                    if (user) {
+                        if (userEmailEl)
+                            userEmailEl.textContent = user.email || "User";
+
+                        if (userRoleEl) {
+                            userRoleEl.textContent = isAdmin
+                                ? "Administrator"
+                                : "Viewer";
+                            userRoleEl.classList.remove(
+                                "text-slate-400",
+                                "text-indigo",
+                            );
+                            userRoleEl.classList.add(
+                                isAdmin ? "text-indigo" : "text-slate-400",
+                            );
+                        }
+
+                        if (isAdmin && resetBtn) {
+                            resetBtn.classList.remove("hidden");
+                        } else if (resetBtn) {
+                            resetBtn.classList.add("hidden");
+                        }
+                    } else {
+                        if (userEmailEl) userEmailEl.textContent = "Guest";
+                        if (userRoleEl)
+                            userRoleEl.textContent = "Not logged in";
+                    }
+
+                    logoutBtn?.addEventListener("click", () => {
+                        if (confirm("Are you sure you want to sign out?")) {
+                            signOut();
+                        }
+                    });
+
+                    resetBtn?.addEventListener("click", async () => {
+                        if (
+                            confirm(
+                                "DANGER: This will delete ALL YOUR transactions, goals, and budgets. This action cannot be undone. Are you sure?",
+                            )
+                        ) {
+                            await resetAllData();
+                            window.location.href = "/";
+                        }
+                    });
+                }
+
+                document.addEventListener("astro:page-load", initNavbar);
+            </script>
         </div>
     </div>
 </nav>
-
-<script>
-    import { resetAllData } from "../utils/store";
-
-    function initNavbar() {
-        const resetBtn = document.getElementById("reset-app-btn");
-        resetBtn?.addEventListener("click", () => {
-            if (
-                confirm(
-                    "DANGER: This will delete ALL transactions, goals, and budgets. This action cannot be undone. Are you sure?",
-                )
-            ) {
-                resetAllData();
-                window.location.href = "/";
-            }
-        });
-    }
-
-    document.addEventListener("astro:page-load", initNavbar);
-</script>
