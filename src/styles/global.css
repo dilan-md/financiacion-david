@@ -111,3 +111,18 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+@keyframes goalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.goal-slide-in {
+    animation: goalSlideIn 0.35s ease-out;
+}

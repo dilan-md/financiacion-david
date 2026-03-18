@@ -19,6 +19,7 @@ export interface Goal {
     date: string;
     icon: string;
     current: number;
+    notes?: string;
     user_id?: string;
 }
 

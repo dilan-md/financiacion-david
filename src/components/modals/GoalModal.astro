@@ -155,6 +155,21 @@
                 </div>
             </div>
 
+            <div class="mb-8">
+                <label
+                    for="goal-notes"
+                    class="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-2"
+                    >Notes / Details</label
+                >
+                <textarea
+                    id="goal-notes"
+                    name="notes"
+                    rows="3"
+                    placeholder="Add any extra details about this goal..."
+                    class="w-full py-3 px-4 rounded-xl border-2 border-slate-200 focus:border-indigo focus:ring-0 text-slate-dark font-medium bg-white transition-colors placeholder-slate-300 resize-none"
+                ></textarea>
+            </div>
+
             <button
                 type="submit"
                 id="submit-goal-btn"
@@ -205,6 +220,9 @@
         const targetAmountInput = document.getElementById(
             "target-amount",
         ) as HTMLInputElement;
+        const goalNotesInput = document.getElementById(
+            "goal-notes",
+        ) as HTMLTextAreaElement;
 
         // Set default date to +6 months if empty
         if (targetDateInput && !targetDateInput.value) {
@@ -233,6 +251,7 @@
                     if (targetAmountInput)
                         targetAmountInput.value = goal.amount.toString();
                     if (targetDateInput) targetDateInput.value = goal.date;
+                    if (goalNotesInput) goalNotesInput.value = goal.notes || "";
 
                     const iconInput = form.querySelector(
                         `input[name="icon"][value="${goal.icon}"]`,
@@ -312,6 +331,7 @@
                                     'input[name="icon"]:checked',
                                 ) as HTMLInputElement
                             )?.value || "savings",
+                        notes: (formData.get("notes") as string) || "",
                     };
 
                     if (id) {
