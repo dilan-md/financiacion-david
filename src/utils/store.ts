@@ -23,6 +23,14 @@ export interface Goal {
     user_id?: string;
 }
 
+export interface CalendarNote {
+    id: string;
+    date: string;
+    note: string;
+    user_id?: string;
+    created_at?: string;
+}
+
 export type Budgets = Record<string, number>;
 
 // --- Auth Functions ---
@@ -184,6 +192,38 @@ export const updateGoalProgress = async (goalId: string, amount: number) => {
     window.dispatchEvent(new CustomEvent('goals-updated'));
 };
 
+export const withdrawGoalFunds = async (goalId: string, amount: number) => {
+    const goals = await getGoals();
+    const goal = goals.find(g => g.id === goalId);
+    if (!goal) return;
+
+    const withdrawAmount = Math.min(amount, goal.current);
+    if (withdrawAmount <= 0) return;
+
+    const newCurrent = goal.current - withdrawAmount;
+
+    const { error } = await supabase
+        .from('goals')
+        .update({ current: newCurrent })
+        .eq('id', goalId);
+
+    if (error) {
+        console.error('Error withdrawing from goal:', error);
+        return;
+    }
+
+    await addTransaction({
+        type: 'income',
+        amount: withdrawAmount,
+        category: 'other_income',
+        goalId: goalId,
+        note: `Withdrew from goal: ${goal.name}`,
+        date: new Date().toISOString().split('T')[0]
+    });
+
+    window.dispatchEvent(new CustomEvent('goals-updated'));
+};
+
 export const getSavingsTotal = async (): Promise<number> => {
     const goals = await getGoals();
     return goals.reduce((sum, goal) => sum + goal.current, 0);
@@ -315,6 +355,47 @@ export const resetAllData = async () => {
     window.dispatchEvent(new CustomEvent('transactions-updated'));
     window.dispatchEvent(new CustomEvent('goals-updated'));
     window.dispatchEvent(new CustomEvent('budgets-updated'));
+};
+
+// --- Calendar Note Functions ---
+
+export const getCalendarNotes = async (): Promise<CalendarNote[]> => {
+    const { data, error } = await supabase
+        .from('calendar_notes')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching calendar notes:', error);
+        return [];
+    }
+    return data || [];
+};
+
+export const addCalendarNote = async (date: string, note: string) => {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const { error } = await supabase
+        .from('calendar_notes')
+        .insert([{
+            user_id: user.id,
+            date,
+            note
+        }]);
+
+    if (error) console.error('Error adding calendar note:', error);
+    window.dispatchEvent(new CustomEvent('calendar-notes-updated'));
+};
+
+export const deleteCalendarNote = async (id: string) => {
+    const { error } = await supabase
+        .from('calendar_notes')
+        .delete()
+        .eq('id', id);
+
+    if (error) console.error('Error deleting calendar note:', error);
+    window.dispatchEvent(new CustomEvent('calendar-notes-updated'));
 };
 
 // --- Helpers ---

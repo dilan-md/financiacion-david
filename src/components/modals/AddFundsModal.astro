@@ -71,6 +71,7 @@
 <script>
     import {
         updateGoalProgress,
+        withdrawGoalFunds,
         getGoals,
         isUserAdmin,
     } from "../../utils/store";
@@ -88,7 +89,7 @@
 
         if (!modal || !form || !closeBtn) return;
 
-        (window as any).openAddFundsModal = async (goalId: string) => {
+        (window as any).openAddFundsModal = async (goalId: string, mode: 'add' | 'withdraw' = 'add') => {
             const isAdmin = await isUserAdmin();
             const submitBtn = form.querySelector(
                 'button[type="submit"]',
@@ -99,7 +100,34 @@
             const goal = goals.find((g: any) => g.id === goalId);
             if (!goal) return;
 
-            if (goalNameEl) goalNameEl.textContent = `Saving for: ${goal.name}`;
+            // Store mode on the form
+            (form as any).__fundsMode = mode;
+
+            const titleEl = modal.querySelector('h2');
+            const headerEl = modal.querySelector('header');
+
+            if (mode === 'withdraw') {
+                if (titleEl) titleEl.textContent = 'Withdraw Funds';
+                if (goalNameEl) goalNameEl.textContent = `From: ${goal.name} (${goal.current.toLocaleString()} saved)`;
+                if (submitBtn) {
+                    submitBtn.textContent = 'Confirm Withdrawal';
+                    submitBtn.className = 'w-full py-4 rounded-xl text-white font-bold text-lg bg-orange hover:opacity-90 transition-all shadow-tactile hover:shadow-tactile-hover translate-y-0 hover:translate-y-[1px]';
+                }
+                if (headerEl) headerEl.className = 'flex justify-between items-center p-6 border-b border-slate-100 bg-orange/5';
+                const amountLabel = form.querySelector('label[for="fund-amount"]');
+                if (amountLabel) amountLabel.textContent = 'Amount to withdraw';
+            } else {
+                if (titleEl) titleEl.textContent = 'Add Funds';
+                if (goalNameEl) goalNameEl.textContent = `Saving for: ${goal.name}`;
+                if (submitBtn) {
+                    submitBtn.textContent = 'Confirm Deposit';
+                    submitBtn.className = 'w-full py-4 rounded-xl text-white font-bold text-lg bg-teal hover:bg-teal-600 transition-colors shadow-tactile hover:shadow-tactile-hover translate-y-0 hover:translate-y-[1px]';
+                }
+                if (headerEl) headerEl.className = 'flex justify-between items-center p-6 border-b border-slate-100 bg-teal/5';
+                const amountLabel = form.querySelector('label[for="fund-amount"]');
+                if (amountLabel) amountLabel.textContent = 'Amount to add';
+            }
+
             if (goalIdInput) goalIdInput.value = goalId;
 
             modal.showModal();
@@ -143,7 +171,12 @@
                 const amount = parseFloat(formData.get("amount") as string);
 
                 if (goalId && amount > 0) {
-                    await updateGoalProgress(goalId, amount);
+                    const mode = (form as any).__fundsMode || 'add';
+                    if (mode === 'withdraw') {
+                        await withdrawGoalFunds(goalId, amount);
+                    } else {
+                        await updateGoalProgress(goalId, amount);
+                    }
                     modal.close();
                     form.reset();
                 }

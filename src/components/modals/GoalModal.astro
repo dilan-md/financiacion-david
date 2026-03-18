@@ -85,75 +85,8 @@
                 />
             </div>
 
-            <div class="mb-8">
-                <label
-                    class="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-3"
-                    >Choose an Icon</label
-                >
-                <div class="grid grid-cols-4 gap-3">
-                    <label class="cursor-pointer relative">
-                        <input
-                            type="radio"
-                            name="icon"
-                            value="flight"
-                            checked
-                            class="peer sr-only"
-                        />
-                        <div
-                            class="w-full aspect-square rounded-2xl flex items-center justify-center bg-slate-50 text-slate-400 border-2 border-transparent peer-checked:border-indigo peer-checked:bg-indigo-bg peer-checked:text-indigo hover:bg-slate-100 transition-colors"
-                        >
-                            <span class="material-symbols-outlined text-3xl"
-                                >flight</span
-                            >
-                        </div>
-                    </label>
-                    <label class="cursor-pointer relative">
-                        <input
-                            type="radio"
-                            name="icon"
-                            value="directions_car"
-                            class="peer sr-only"
-                        />
-                        <div
-                            class="w-full aspect-square rounded-2xl flex items-center justify-center bg-slate-50 text-slate-400 border-2 border-transparent peer-checked:border-orange peer-checked:bg-orange-bg peer-checked:text-orange hover:bg-slate-100 transition-colors"
-                        >
-                            <span class="material-symbols-outlined text-3xl"
-                                >directions_car</span
-                            >
-                        </div>
-                    </label>
-                    <label class="cursor-pointer relative">
-                        <input
-                            type="radio"
-                            name="icon"
-                            value="home"
-                            class="peer sr-only"
-                        />
-                        <div
-                            class="w-full aspect-square rounded-2xl flex items-center justify-center bg-slate-50 text-slate-400 border-2 border-transparent peer-checked:border-teal peer-checked:bg-teal/10 peer-checked:text-teal hover:bg-slate-100 transition-colors"
-                        >
-                            <span class="material-symbols-outlined text-3xl"
-                                >home</span
-                            >
-                        </div>
-                    </label>
-                    <label class="cursor-pointer relative">
-                        <input
-                            type="radio"
-                            name="icon"
-                            value="laptop_mac"
-                            class="peer sr-only"
-                        />
-                        <div
-                            class="w-full aspect-square rounded-2xl flex items-center justify-center bg-slate-50 text-slate-400 border-2 border-transparent peer-checked:border-pink-500 peer-checked:bg-pink-100 peer-checked:text-pink-600 hover:bg-slate-100 transition-colors"
-                        >
-                            <span class="material-symbols-outlined text-3xl"
-                                >laptop_mac</span
-                            >
-                        </div>
-                    </label>
-                </div>
-            </div>
+            <!-- Icon Selection Removed -->
+            <input type="hidden" name="icon" value="savings" />
 
             <div class="mb-8">
                 <label
@@ -254,9 +187,9 @@
                     if (goalNotesInput) goalNotesInput.value = goal.notes || "";
 
                     const iconInput = form.querySelector(
-                        `input[name="icon"][value="${goal.icon}"]`,
+                        'input[name="icon"]',
                     ) as HTMLInputElement;
-                    if (iconInput) iconInput.checked = true;
+                    if (iconInput) iconInput.value = goal.icon || "savings";
 
                     if (submitBtn) submitBtn.textContent = "Save Changes";
                     if (titleEl) titleEl.textContent = "Edit Savings Goal";

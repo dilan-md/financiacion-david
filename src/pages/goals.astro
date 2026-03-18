@@ -156,7 +156,6 @@ import AddFundsModal from "../components/modals/AddFundsModal.astro";
                         <circle class="text-indigo progress-ring-circle stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="${dashoffset}" stroke-linecap="round" stroke-width="8"></circle>
                     </svg>
                     <div class="absolute inset-0 flex items-center justify-center flex-col">
-                        <span class="material-symbols-outlined text-4xl text-indigo mb-1">${g.icon}</span>
                         <span class="font-mono text-3xl font-bold text-slate-dark">${progress}%</span>
                     </div>
                 </div>
@@ -177,12 +176,20 @@ import AddFundsModal from "../components/modals/AddFundsModal.astro";
                     <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Remaining Balance: </span>
                     <span class="font-mono text-sm font-bold text-slate-500">${formatCurrency(remaining)}</span>
                 </div>
-                <button 
-                    onclick="window.openAddFundsModal('${g.id}')"
-                    class="mt-6 w-full py-3 bg-indigo text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-sm"
-                >
-                    Add Funds
-                </button>
+                <div class="mt-6 w-full grid grid-cols-2 gap-3">
+                    <button 
+                        onclick="window.openAddFundsModal('${g.id}', 'add')"
+                        class="py-3 bg-teal text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-sm text-sm"
+                    >
+                        Add Funds
+                    </button>
+                    <button 
+                        onclick="window.openAddFundsModal('${g.id}', 'withdraw')"
+                        class="py-3 bg-orange/10 text-orange font-bold rounded-xl hover:bg-orange/20 transition-all text-sm border border-orange/20"
+                    >
+                        Withdraw
+                    </button>
+                </div>
             </div>
             `;
                 })
