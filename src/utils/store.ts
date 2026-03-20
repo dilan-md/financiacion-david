@@ -37,11 +37,7 @@ export type Budgets = Record<string, number>;
 
 export async function isUserAdmin(): Promise<boolean> {
     const user = await getCurrentUser();
-    if (!user) return false;
-    // For now we check against a list of admin emails or a specific one
-    // In a real app, this would be a role in the DB
-    const adminEmails = ['florezramirezronaldo@gmail.com', 'david@example.com', 'dilan@example.com'];
-    return adminEmails.includes(user.email || '');
+    return !!user;
 }
 
 export const getCurrentUser = async () => {

@@ -126,17 +126,17 @@
                         </button>
                     </div>
                 `).join('');
-
-                notesList.querySelectorAll('.delete-day-note').forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        const id = (btn as HTMLElement).dataset.id!;
-                        await deleteCalendarNote(id);
-                        await refreshNotes();
-                    });
-                });
             }
 
             notesList.innerHTML = html;
+
+            notesList.querySelectorAll('.delete-day-note').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = (btn as HTMLElement).dataset.id!;
+                    await deleteCalendarNote(id);
+                    await refreshNotes();
+                });
+            });
         }
 
         saveBtn?.addEventListener('click', async () => {
